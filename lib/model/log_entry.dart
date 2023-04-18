@@ -1,11 +1,11 @@
 class LogEntry {
   int? id;
   DateTime startDate;
-  DateTime endDate;
+  DateTime? endDate;
   String startLocation;
-  String endLocation;
-  String? reason;
-  String? vehicle;
+  String? endLocation;
+  String reason;
+  String vehicle;
   int? startMileage;
   int? endMileage;
   int? parent;
@@ -13,11 +13,11 @@ class LogEntry {
   LogEntry({
     this.id,
     required this.startDate,
-    required this.endDate,
+    this.endDate,
     required this.startLocation,
-    required this.endLocation,
-    this.reason,
-    this.vehicle,
+    this.endLocation,
+    required this.reason,
+    required this.vehicle,
     this.startMileage,
     this.endMileage,
     this.parent,
@@ -27,7 +27,7 @@ class LogEntry {
     return <String, dynamic>{
       "id": id,
       "start_date": startDate.millisecondsSinceEpoch,
-      "end_date": endDate.millisecondsSinceEpoch,
+      "end_date": endDate?.millisecondsSinceEpoch,
       "start_location": startLocation,
       "end_location": endLocation,
       "reason": reason,

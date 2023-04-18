@@ -1,4 +1,5 @@
 import 'package:fahrtenbuch/model/log_entry.dart';
+import 'package:fahrtenbuch/view/form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -13,9 +14,9 @@ class LogEntryWidget extends StatelessWidget {
       padding: const EdgeInsets.all(5),
       child: ListTile(
         leading: const Icon(
-          Icons.car_rental,
+          Icons.drive_eta,
         ),
-        trailing: const IconButton(onPressed: null, icon: Icon(Icons.edit)),
+        trailing: const Icon(Icons.edit),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -26,14 +27,24 @@ class LogEntryWidget extends StatelessWidget {
               '${entry.startLocation} - ${entry.endLocation}',
             ),
             Text(
-              '${entry.startMileage} km - ${entry.endMileage} km (${entry.endMileage!-entry.startMileage!} km)',
+              '${entry.startMileage} km - ${entry.endMileage} km (${entry.endMileage! - entry.startMileage!} km)',
             ),
           ],
         ),
         title: Text(
-          '${DateFormat('dd.MM.yyyy').format(entry.startDate)} - ${DateFormat('hh:mm').format(entry.startDate)} - ${DateFormat('hh:mm').format(entry.endDate)}',
+          '${DateFormat('dd.MM.yyyy').format(entry.startDate)} - ${DateFormat('hh:mm').format(entry.startDate)} - ${entry.endDate != null ? DateFormat('hh:mm').format(entry.endDate!) : 'offen'}',
         ),
         isThreeLine: true,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FormScreen(
+                entryId: entry.id,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

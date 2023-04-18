@@ -1,5 +1,6 @@
 import 'package:fahrtenbuch/model/log_entry.dart';
 import 'package:fahrtenbuch/service/sqlite_service.dart';
+import 'package:fahrtenbuch/view/form_screen.dart';
 import 'package:fahrtenbuch/view/widget/log_entry_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -31,26 +32,30 @@ class _MyHomeScreen extends State<HomeScreen> {
     //   }
     // }
     super.initState();
-    sqliteService.getAll().then((result) => entries = result);
+    sqliteService.getAll().then((result) => {
+          setState(() {
+            entries = result;
+          })
+        });
   }
 
   void _addEntry() async {
-    LogEntry entry = LogEntry(
-      startDate: DateTime.now(),
-      endDate: DateTime.now(),
-      startLocation: 'Test',
-      endLocation: 'Test2',
-      reason: 'Cortecs',
-      vehicle: 'VW Golf',
-      startMileage: 20000,
-      endMileage: 20200,
-    );
-
-    entry = await sqliteService.save(entry);
-
-    setState(() {
-      entries.add(entry);
-    });
+    // LogEntry entry = LogEntry(
+    //   startDate: DateTime.now(),
+    //   endDate: DateTime.now(),
+    //   startLocation: 'Test',
+    //   endLocation: 'Test2',
+    //   reason: 'Cortecs',
+    //   vehicle: 'VW Golf',
+    //   startMileage: 20000,
+    //   endMileage: 20200,
+    // );
+    //
+    // entry = await sqliteService.save(entry);
+    //
+    // setState(() {
+    //   entries.add(entry);
+    // });
   }
 
   @override
@@ -67,7 +72,14 @@ class _MyHomeScreen extends State<HomeScreen> {
         itemCount: entries.length,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addEntry,
+        onPressed: () async {
+          LogEntry newEntry = await Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const FormScreen()));
+
+          setState(() {
+              entries.add(newEntry);
+            });
+        },
         tooltip: 'Neu',
         child: const Icon(Icons.add),
       ),
