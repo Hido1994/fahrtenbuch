@@ -1,6 +1,13 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'log_entry.g.dart';
+
+@JsonSerializable()
 class LogEntry {
   int? id;
-  DateTime startDate;
+  @JsonKey(fromJson: _millisecondsToDateTime, toJson: _datetimeToMilliseconds)
+  DateTime? startDate;
+  @JsonKey(fromJson: _millisecondsToDateTime, toJson: _datetimeToMilliseconds)
   DateTime? endDate;
   String startLocation;
   String? endLocation;
@@ -23,33 +30,16 @@ class LogEntry {
     this.parent,
   });
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      "id": id,
-      "start_date": startDate.millisecondsSinceEpoch,
-      "end_date": endDate?.millisecondsSinceEpoch,
-      "start_location": startLocation,
-      "end_location": endLocation,
-      "reason": reason,
-      "vehicle": vehicle,
-      "start_mileage": startMileage,
-      "end_mileage": endMileage,
-      "parent": parent,
-    };
-  }
+  Map<String, dynamic> toMap() => _$LogEntryToJson(this);
 
-  factory LogEntry.fromMap(Map<String, dynamic> map) {
-    return LogEntry(
-      id: map['id'],
-      startDate: DateTime.fromMicrosecondsSinceEpoch(map['start_date']),
-      endDate: DateTime.fromMicrosecondsSinceEpoch(map['end_date']),
-      startLocation: map['start_location'],
-      endLocation: map['end_location'],
-      reason: map['reason'],
-      vehicle: map['vehicle'],
-      startMileage: map['start_mileage'],
-      endMileage: map['end_mileage'],
-      parent: map['parent'],
-    );
-  }
+  factory LogEntry.fromJson(Map<String, dynamic> json) =>
+      _$LogEntryFromJson(json);
+
+  static DateTime? _millisecondsToDateTime(int? milliseconds) =>
+      milliseconds == null
+          ? null
+          : DateTime.fromMillisecondsSinceEpoch(milliseconds);
+
+  static int? _datetimeToMilliseconds(DateTime? dateTime) =>
+      dateTime?.millisecondsSinceEpoch;
 }

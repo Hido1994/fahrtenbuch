@@ -32,7 +32,7 @@ class LogEntryWidget extends StatelessWidget {
           ],
         ),
         title: Text(
-          '${DateFormat('dd.MM.yyyy').format(entry.startDate)} - ${DateFormat('hh:mm').format(entry.startDate)} - ${entry.endDate != null ? DateFormat('hh:mm').format(entry.endDate!) : 'offen'}',
+          '${DateFormat('dd.MM.yyyy').format(entry.startDate!)} - ${DateFormat('hh:mm').format(entry.startDate!)} - ${entry.endDate != null ? DateFormat('hh:mm').format(entry.endDate!) : 'offen'}',
         ),
         isThreeLine: true,
         onTap: () {

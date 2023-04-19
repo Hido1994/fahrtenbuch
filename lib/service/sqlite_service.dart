@@ -32,14 +32,14 @@ class SqliteService {
   _onCreate(Database db, int version) async {
     await db.execute("CREATE TABLE Fahrtenprotokoll ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-        "start_date INTEGER NOT NULL,"
-        "end_date INTEGER NOT NULL,"
-        "start_location TEXT,"
-        "end_location TEXT,"
+        "startDate INTEGER NOT NULL,"
+        "endDate INTEGER NOT NULL,"
+        "startLocation TEXT,"
+        "endLocation TEXT,"
         "reason TEXT,"
         "vehicle TEXT,"
-        "start_mileage INTEGER,"
-        "end_mileage INTEGER,"
+        "startMileage INTEGER,"
+        "endMileage INTEGER,"
         "parent INTEGER, "
         "FOREIGN KEY (parent) REFERENCES Fahrtenprotokoll (id) ON DELETE CASCADE "
         ")");
@@ -55,7 +55,7 @@ class SqliteService {
     Database db = await database;
     List<Map<String, dynamic>> result = await db.query(TABLE);
     List<LogEntry> items = [];
-    items = result.map((e) => LogEntry.fromMap(e)).toList();
+    items = result.map((e) => LogEntry.fromJson(e)).toList();
     return items;
   }
 
