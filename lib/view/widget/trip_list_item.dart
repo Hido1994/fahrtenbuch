@@ -1,12 +1,12 @@
-import 'package:fahrtenbuch/model/log_entry.dart';
-import 'package:fahrtenbuch/view/form_screen.dart';
+import 'package:fahrtenbuch/persistence/model/trip.dart';
+import 'package:fahrtenbuch/view/screen/form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class LogEntryWidget extends StatelessWidget {
-  final LogEntry entry;
+class TripListItem extends StatelessWidget {
+  final Trip entry;
 
-  const LogEntryWidget({Key? key, required this.entry}) : super(key: key);
+  const TripListItem({Key? key, required this.entry}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

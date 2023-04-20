@@ -1,5 +1,5 @@
-import 'package:fahrtenbuch/model/log_entry.dart';
-import 'package:fahrtenbuch/service/sqlite_service.dart';
+import 'package:fahrtenbuch/persistence/model/trip.dart';
+import 'package:fahrtenbuch/service/trip_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
@@ -14,11 +14,13 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
-  static final DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy hh:mm');
+  static final DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm');
 
   final _formKey = GlobalKey<FormState>();
-  SqliteService sqliteService = SqliteService.instance;
+  TripService sqliteService = TripService.instance;
 
+  DateTime _selectedStartDate = DateTime.now();
+  DateTime _selectedEndDate = DateTime.now();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
   final TextEditingController _reasonController = TextEditingController();
@@ -29,8 +31,18 @@ class _FormScreenState extends State<FormScreen> {
   final TextEditingController _startMileageController = TextEditingController();
   final TextEditingController _endMileageController = TextEditingController();
 
-  DateTime _selectedStartDate = DateTime.now();
-  DateTime _selectedEndDate = DateTime.now();
+  @override
+  void initState() {
+    super.initState();
+
+    DateTime now = DateTime.now();
+    now.subtract(Duration(minutes: now.minute, seconds: now.second));
+    _selectedStartDate = now;
+    _selectedEndDate = now;
+
+    _startDateController.text = dateTimeFormat.format(_selectedStartDate);
+    _endDateController.text = dateTimeFormat.format(_selectedEndDate);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +168,7 @@ class _FormScreenState extends State<FormScreen> {
         onPressed: () {
           if (_formKey.currentState!.validate()) {
             sqliteService
-                .save(LogEntry(
+                .save(Trip(
                   startDate: _selectedStartDate,
                   endDate: _selectedEndDate,
                   reason: _reasonController.text,

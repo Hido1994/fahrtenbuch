@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'log_entry.g.dart';
+part 'trip.g.dart';
 
 @JsonSerializable()
-class LogEntry {
+class Trip {
   int? id;
   @JsonKey(fromJson: _millisecondsToDateTime, toJson: _datetimeToMilliseconds)
   DateTime? startDate;
@@ -17,7 +17,7 @@ class LogEntry {
   int? endMileage;
   int? parent;
 
-  LogEntry({
+  Trip({
     this.id,
     required this.startDate,
     this.endDate,
@@ -30,10 +30,10 @@ class LogEntry {
     this.parent,
   });
 
-  Map<String, dynamic> toMap() => _$LogEntryToJson(this);
+  Map<String, dynamic> toJson() => _$TripToJson(this);
 
-  factory LogEntry.fromJson(Map<String, dynamic> json) =>
-      _$LogEntryFromJson(json);
+  factory Trip.fromJson(Map<String, dynamic> json) =>
+      _$TripFromJson(json);
 
   static DateTime? _millisecondsToDateTime(int? milliseconds) =>
       milliseconds == null

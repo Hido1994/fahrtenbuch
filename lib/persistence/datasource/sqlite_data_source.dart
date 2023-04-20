@@ -1,26 +1,24 @@
-import 'dart:io';
-
-import 'package:fahrtenbuch/model/log_entry.dart';
+import 'package:fahrtenbuch/persistence/datasource/data_source.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SqliteService {
-  static const String TABLE = 'Fahrtenprotokoll';
-  static const String DB_NAME = 'fahrtenprotokoll.db';
-
+class SqliteDataSource extends DataSource {
+  static const String dbName = 'trip.db';
   Database? _database;
+
+  static final SqliteDataSource instance =
+      SqliteDataSource._privateConstructor();
+
+  SqliteDataSource._privateConstructor();
 
   Future<Database> get database async {
     if (_database != null) {
       return _database!;
     }
 
-    _database = await _initDB(DB_NAME);
+    _database = await _initDB(dbName);
     return _database!;
   }
-
-  static final SqliteService instance = SqliteService._privateConstructor();
-  SqliteService._privateConstructor();
 
   _initDB(String name) async {
     String databasePath = await getDatabasesPath();
@@ -30,7 +28,7 @@ class SqliteService {
   }
 
   _onCreate(Database db, int version) async {
-    await db.execute("CREATE TABLE Fahrtenprotokoll ("
+    await db.execute("CREATE TABLE Trip ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
         "startDate INTEGER NOT NULL,"
         "endDate INTEGER NOT NULL,"
@@ -45,27 +43,30 @@ class SqliteService {
         ")");
   }
 
-  Future<LogEntry> save(LogEntry entry) async {
+  @override
+  Future<dynamic> save(String table, Map<String, dynamic> entry) async {
     Database db = await database;
-    entry.id = await db.insert(TABLE, entry.toMap());
-    return entry;
+    dynamic id = await db.insert(table, entry);
+    return id;
   }
 
-  Future<List<LogEntry>> getAll() async {
+  @override
+  Future<List<Map<String, dynamic>>> getAll(String table) async {
     Database db = await database;
-    List<Map<String, dynamic>> result = await db.query(TABLE);
-    List<LogEntry> items = [];
-    items = result.map((e) => LogEntry.fromJson(e)).toList();
-    return items;
+    List<Map<String, dynamic>> result = await db.query(table);
+    return result;
   }
 
-  Future<int> delete(int id) async {
+  @override
+  Future<dynamic> delete(String table, dynamic id, {String idName ='id'}) async {
     Database db = await database;
-    return await db.delete(TABLE, where: 'id = ?', whereArgs: [id]);
+    return await db.delete(table, where: '$idName = ?', whereArgs: [id]);
   }
 
-  Future<int> update(LogEntry entry) async {
+  @override
+  Future<dynamic> update(String table, Map<String, dynamic> entry, {String idName ='id'}) async {
     Database db = await database;
-    return await db.update(TABLE, entry.toMap(), where: 'id = ?', whereArgs: [entry.id]);
+    return await db
+        .update(table, entry, where: '$idName = ?', whereArgs: [entry[idName]]);
   }
 }
