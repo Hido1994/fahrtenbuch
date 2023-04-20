@@ -1,4 +1,5 @@
 import 'package:fahrtenbuch/view/screen/report_screen.dart';
+import 'package:fahrtenbuch/view/screen/settings_screen.dart';
 import 'package:fahrtenbuch/view/screen/trips_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -42,31 +43,17 @@ class _MainScreen extends State<MainScreen> {
   Map<String, dynamic> routes = {
     '/': const TripsScreen(),
     '/report': const ReportScreen(),
+    '/settings': const SettingsScreen(),
   };
 
   @override
   void initState() {
-    // PreferenceService preferenceService = PreferenceService();
-    // String? databasePath = await preferenceService.getDatabasePath();
-    //
-    // if(databasePath == null) {
-    //   FilePickerResult? result = await FilePicker.platform.pickFiles();
-    //
-    //   if (result != null) {
-    //     // File file = File(result.files.single.path);
-    //   } else {
-    //     // Do something else...
-    //   }
-    // }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Fahrtenbuch'),
-        ),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -76,6 +63,10 @@ class _MainScreen extends State<MainScreen> {
             BottomNavigationBarItem(
               icon: Icon(Icons.document_scanner),
               label: 'Bericht',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Settings',
             ),
           ],
           currentIndex: _selectedIndex,

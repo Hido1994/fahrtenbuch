@@ -19,6 +19,7 @@ class _ReportScreen extends State<ReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('Report')),
       body: const Placeholder(),
     );
   }

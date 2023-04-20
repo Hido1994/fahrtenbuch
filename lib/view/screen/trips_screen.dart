@@ -28,6 +28,7 @@ class _MyTripsScreen extends State<TripsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('Fahrtenbuch')),
       body: ListView.separated(
         separatorBuilder: (context, index) => const Divider(),
         itemBuilder: (context, index) {
@@ -37,7 +38,7 @@ class _MyTripsScreen extends State<TripsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          Trip? newEntry = await Navigator.of(context).push(
+          Trip? newEntry = await Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(builder: (context) => const FormScreen()));
 
           if (newEntry != null) {

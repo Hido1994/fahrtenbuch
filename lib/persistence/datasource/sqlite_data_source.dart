@@ -1,8 +1,12 @@
 import 'package:fahrtenbuch/persistence/datasource/data_source.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../../service/preference_service.dart';
+
 class SqliteDataSource extends DataSource {
+  PreferenceService preferenceService = PreferenceService.instance;
   static const String dbName = 'trip.db';
   Database? _database;
 
@@ -16,13 +20,12 @@ class SqliteDataSource extends DataSource {
       return _database!;
     }
 
-    _database = await _initDB(dbName);
+    _database = await _initDB();
     return _database!;
   }
 
-  _initDB(String name) async {
-    String databasePath = await getDatabasesPath();
-    String path = join(databasePath, name);
+  _initDB() async {
+    String path = join(await preferenceService.getDatabasePath(), dbName);
     var db = await openDatabase(path, version: 1, onCreate: _onCreate);
     return db;
   }
