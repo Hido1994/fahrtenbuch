@@ -5,5 +5,7 @@ abstract class AbstractRepository<T, ID> {
 
   Future<ID> delete(ID id);
 
-  Future<ID> update(T entry);
+  Future<T> getById(ID id);
+
+  Future<List<dynamic>> getDistinctValues(String column);
 }

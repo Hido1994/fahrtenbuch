@@ -2,6 +2,7 @@ import 'package:fahrtenbuch/persistence/datasource/sqlite_data_source.dart';
 import 'package:fahrtenbuch/service/preference_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -42,11 +43,15 @@ class _SettingsScreen extends State<SettingsScreen> {
                 readOnly: true,
                 controller: _databasePathController,
                 onTap: () async {
-                  String? result = await FilePicker.platform.getDirectoryPath();
+                  if (await Permission.manageExternalStorage.request().isGranted) {
+                    //noop
+                  }
+
+                  FilePickerResult? result = await FilePicker.platform.pickFiles();
 
                   if (result != null) {
-                    _databasePathController.text = result;
-                    preferenceService.saveDatabasePath(result);
+                    _databasePathController.text = result.files.single.path!;
+                    preferenceService.saveDatabasePath(result.files.single.path!);
                   }
                 },
               ),

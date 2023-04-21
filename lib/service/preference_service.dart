@@ -1,3 +1,4 @@
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,7 +14,7 @@ class PreferenceService {
     if (prefs.containsKey('db_path')) {
       return prefs.getString('db_path')!;
     } else {
-      return (await getApplicationDocumentsDirectory()).path;
+      return join((await getApplicationDocumentsDirectory()).path, 'trips.db');
     }
   }
 

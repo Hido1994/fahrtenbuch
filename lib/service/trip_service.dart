@@ -8,23 +8,48 @@ class TripService {
 
   final TripRepository _tripRepository = TripRepository.instance;
 
-  @override
   Future<int> delete(int id) async {
     return await _tripRepository.delete(id);
   }
 
-  @override
   Future<List<Trip>> getAll() async {
     return await _tripRepository.getAll();
   }
 
-  @override
   Future<Trip> save(Trip entry) async {
     return await _tripRepository.save(entry);
   }
 
-  @override
-  Future<int> update(Trip entry) async {
-    return await _tripRepository.update(entry);
+  Future<Trip> getById(int id) async {
+    return await _tripRepository.getById(id);
+  }
+
+  Future<List> getReasons() async {
+    return await _tripRepository.getDistinctValues('reason');
+  }
+
+  Future<List<dynamic>> getVehicles() async {
+    return await _tripRepository.getDistinctValues('vehicle');
+  }
+
+  Future<DateTime?> getLastEndDate() async {
+    List result = await _tripRepository.getDistinctValues('endDate');
+    return Trip.millisecondsToDateTime(result.first);
+  }
+
+  Future<int?> getLastEndMileage() async {
+    List result = await _tripRepository.getDistinctValues('endMileage');
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<String?> getLastEndLocation() async {
+    List result = await _tripRepository.getDistinctValues('endLocation');
+    return result.isNotEmpty ? result.first : null;
+  }
+
+  Future<List> getLocations() async {
+    List startLocations = await _tripRepository.getDistinctValues('startLocation');
+    List endLocations = await _tripRepository.getDistinctValues('endLocation');
+    return {...startLocations, ...endLocations}.toList();
   }
 }

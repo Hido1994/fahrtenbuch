@@ -5,9 +5,9 @@ part 'trip.g.dart';
 @JsonSerializable()
 class Trip {
   int? id;
-  @JsonKey(fromJson: _millisecondsToDateTime, toJson: _datetimeToMilliseconds)
+  @JsonKey(fromJson: millisecondsToDateTime, toJson: datetimeToMilliseconds)
   DateTime? startDate;
-  @JsonKey(fromJson: _millisecondsToDateTime, toJson: _datetimeToMilliseconds)
+  @JsonKey(fromJson: millisecondsToDateTime, toJson: datetimeToMilliseconds)
   DateTime? endDate;
   String startLocation;
   String? endLocation;
@@ -32,14 +32,13 @@ class Trip {
 
   Map<String, dynamic> toJson() => _$TripToJson(this);
 
-  factory Trip.fromJson(Map<String, dynamic> json) =>
-      _$TripFromJson(json);
+  factory Trip.fromJson(Map<String, dynamic> json) => _$TripFromJson(json);
 
-  static DateTime? _millisecondsToDateTime(int? milliseconds) =>
+  static DateTime? millisecondsToDateTime(int? milliseconds) =>
       milliseconds == null
           ? null
           : DateTime.fromMillisecondsSinceEpoch(milliseconds);
 
-  static int? _datetimeToMilliseconds(DateTime? dateTime) =>
+  static int? datetimeToMilliseconds(DateTime? dateTime) =>
       dateTime?.millisecondsSinceEpoch;
 }

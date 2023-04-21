@@ -27,12 +27,12 @@ class TripListItem extends StatelessWidget {
               '${entry.startLocation} - ${entry.endLocation}',
             ),
             Text(
-              '${entry.startMileage} km - ${entry.endMileage} km (${entry.endMileage! - entry.startMileage!} km)',
+              '${entry.startMileage} km - ${(entry.endMileage != null ? entry.endMileage! : '-')} km (${(entry.endMileage != null ? entry.endMileage! - entry.startMileage! : '-')} km)',
             ),
           ],
         ),
         title: Text(
-          '${DateFormat('dd.MM.yyyy').format(entry.startDate!)} - ${DateFormat('hh:mm').format(entry.startDate!)} - ${entry.endDate != null ? DateFormat('hh:mm').format(entry.endDate!) : 'offen'}',
+          '${DateFormat('dd.MM.yyyy').format(entry.startDate!)} - ${DateFormat('HH:mm').format(entry.startDate!)} - ${entry.endDate != null ? DateFormat('HH:mm').format(entry.endDate!) : 'offen'}',
         ),
         isThreeLine: true,
         onTap: () {

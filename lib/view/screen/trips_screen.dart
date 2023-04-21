@@ -15,14 +15,18 @@ class _MyTripsScreen extends State<TripsScreen> {
   TripService sqliteService = TripService.instance;
   List<Trip> entries = [];
 
+  void _refreshList(){
+    sqliteService.getAll().then((result) => {
+      setState(() {
+        entries = result;
+      })
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    sqliteService.getAll().then((result) => {
-          setState(() {
-            entries = result;
-          })
-        });
+    _refreshList();
   }
 
   @override
@@ -38,14 +42,10 @@ class _MyTripsScreen extends State<TripsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          Trip? newEntry = await Navigator.of(context, rootNavigator: true).push(
+          await Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(builder: (context) => const FormScreen()));
 
-          if (newEntry != null) {
-            setState(() {
-              entries.add(newEntry);
-            });
-          }
+          _refreshList();
         },
         tooltip: 'Neu',
         child: const Icon(Icons.add),

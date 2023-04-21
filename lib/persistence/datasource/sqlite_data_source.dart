@@ -1,13 +1,10 @@
 import 'package:fahrtenbuch/persistence/datasource/data_source.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../service/preference_service.dart';
 
 class SqliteDataSource extends DataSource {
   PreferenceService preferenceService = PreferenceService.instance;
-  static const String dbName = 'trip.db';
   Database? _database;
 
   static final SqliteDataSource instance =
@@ -25,7 +22,7 @@ class SqliteDataSource extends DataSource {
   }
 
   _initDB() async {
-    String path = join(await preferenceService.getDatabasePath(), dbName);
+    String path = await preferenceService.getDatabasePath();
     var db = await openDatabase(path, version: 1, onCreate: _onCreate);
     return db;
   }
@@ -56,18 +53,38 @@ class SqliteDataSource extends DataSource {
   @override
   Future<List<Map<String, dynamic>>> getAll(String table) async {
     Database db = await database;
-    List<Map<String, dynamic>> result = await db.query(table);
+    List<Map<String, dynamic>> result =
+        await db.query(table, orderBy: 'startDate DESC');
     return result;
   }
 
   @override
-  Future<dynamic> delete(String table, dynamic id, {String idName ='id'}) async {
+  Future<dynamic> delete(String table, dynamic id,
+      {String idName = 'id'}) async {
     Database db = await database;
     return await db.delete(table, where: '$idName = ?', whereArgs: [id]);
   }
 
   @override
-  Future<dynamic> update(String table, Map<String, dynamic> entry, {String idName ='id'}) async {
+  Future<Map<String, dynamic>> getById(String table, dynamic id,
+      {String idName = 'id'}) async {
+    Database db = await database;
+    List<Map<String, dynamic>> result =
+        await db.query(table, where: '$idName = ?', whereArgs: [id]);
+    return result[0];
+  }
+
+  @override
+  Future<List<dynamic>> getDistinctValues(String table, String column) async {
+    Database db = await database;
+    List<Map<String, dynamic>> result =
+        await db.query(table, columns: [column], distinct: true, orderBy: 'startDate DESC');
+    return result.map((e) => e[column]).toList();
+  }
+
+  @override
+  Future<dynamic> update(String table, Map<String, dynamic> entry,
+      {String idName = 'id'}) async {
     Database db = await database;
     return await db
         .update(table, entry, where: '$idName = ?', whereArgs: [entry[idName]]);

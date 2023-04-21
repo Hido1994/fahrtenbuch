@@ -17,7 +17,10 @@ class _FormScreenState extends State<FormScreen> {
   static final DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm');
 
   final _formKey = GlobalKey<FormState>();
-  TripService sqliteService = TripService.instance;
+  TripService tripService = TripService.instance;
+
+  List vehicles = [];
+  List reasons = [];
 
   DateTime _selectedStartDate = DateTime.now();
   DateTime _selectedEndDate = DateTime.now();
@@ -31,17 +34,61 @@ class _FormScreenState extends State<FormScreen> {
   final TextEditingController _startMileageController = TextEditingController();
   final TextEditingController _endMileageController = TextEditingController();
 
+  Future<void> _initTrip() async {
+    vehicles = await tripService.getVehicles();
+    reasons = await tripService.getReasons();
+
+    if (widget.entryId == null) {
+      DateTime now = DateTime.now();
+      now.subtract(Duration(minutes: now.minute, seconds: now.second));
+      _selectedStartDate = now;
+      _selectedEndDate = now;
+
+      _startDateController.text = dateTimeFormat.format(_selectedStartDate);
+      if (reasons.isNotEmpty) {
+        _reasonController.text = reasons[0];
+      }
+      if (vehicles.isNotEmpty) {
+        _vehicleController.text = vehicles[0];
+      }
+
+      int? lastEndMileage = await tripService.getLastEndMileage();
+      if (lastEndMileage != null) {
+        _startMileageController.text =
+            '${(await tripService.getLastEndMileage())}';
+      }
+
+      String? lastEndLocation = await tripService.getLastEndLocation();
+      if (lastEndLocation != null) {
+        _startLocationController.text = lastEndLocation;
+      }
+    } else {
+      tripService.getById(widget.entryId!).then((value) {
+        _startDateController.text = dateTimeFormat.format(value.startDate!);
+        if (value.endDate != null) {
+          _endDateController.text = dateTimeFormat.format(value.endDate!);
+        }
+        _reasonController.text = value.reason;
+        _startLocationController.text = value.startLocation;
+        if (value.endLocation != null) {
+          _endLocationController.text = value.endLocation!;
+        }
+        _vehicleController.text = value.vehicle;
+        if (value.startMileage != null) {
+          _startMileageController.text = '${value.startMileage!}';
+        }
+        if (value.endMileage != null) {
+          _endMileageController.text = '${value.endMileage!}';
+        }
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
 
-    DateTime now = DateTime.now();
-    now.subtract(Duration(minutes: now.minute, seconds: now.second));
-    _selectedStartDate = now;
-    _selectedEndDate = now;
-
-    _startDateController.text = dateTimeFormat.format(_selectedStartDate);
-    _endDateController.text = dateTimeFormat.format(_selectedEndDate);
+    _initTrip().whenComplete(() => setState(() {}));
   }
 
   @override
@@ -86,15 +133,10 @@ class _FormScreenState extends State<FormScreen> {
                         showTitleActions: true, onConfirm: (date) {
                       _selectedEndDate = date;
                       _endDateController.text = dateTimeFormat.format(date);
-                    }, currentTime: _selectedEndDate, locale: LocaleType.de);
-                  },
-                  validator: (value) {
-                    if (value == null ||
-                        value.isEmpty ||
-                        _selectedEndDate.isBefore(_selectedStartDate)) {
-                      return 'Ankunftszeit eingeben';
-                    }
-                    return null;
+                    },
+                        minTime: _selectedStartDate,
+                        currentTime: _selectedEndDate,
+                        locale: LocaleType.de);
                   },
                 ),
                 TextFormField(
@@ -128,15 +170,9 @@ class _FormScreenState extends State<FormScreen> {
                   },
                 ),
                 TextFormField(
-                  controller: _endLocationController,
-                  decoration: const InputDecoration(label: Text("Ankunftsort")),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Ankunftsort eingeben';
-                    }
-                    return null;
-                  },
-                ),
+                    controller: _endLocationController,
+                    decoration:
+                        const InputDecoration(label: Text("Ankunftsort"))),
                 TextFormField(
                   controller: _startMileageController,
                   decoration:
@@ -152,12 +188,6 @@ class _FormScreenState extends State<FormScreen> {
                   controller: _endMileageController,
                   decoration:
                       const InputDecoration(label: Text("KM-Stand Ankunft")),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'KM-Stand Ankunft eingeben';
-                    }
-                    return null;
-                  },
                 ),
               ],
             ),
@@ -167,8 +197,9 @@ class _FormScreenState extends State<FormScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            sqliteService
+            tripService
                 .save(Trip(
+                  id: widget.entryId,
                   startDate: _selectedStartDate,
                   endDate: _selectedEndDate,
                   reason: _reasonController.text,
