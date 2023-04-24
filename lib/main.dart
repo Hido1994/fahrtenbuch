@@ -1,7 +1,9 @@
+import 'package:fahrtenbuch/state/trip_state.dart';
 import 'package:fahrtenbuch/view/screen/report_screen.dart';
 import 'package:fahrtenbuch/view/screen/settings_screen.dart';
 import 'package:fahrtenbuch/view/screen/trips_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -54,35 +56,38 @@ class _MainScreen extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.list),
-              label: 'Einträge',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.document_scanner),
-              label: 'Bericht',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: (index) {
-            _navigatorKey.currentState
-                ?.popAndPushNamed(routes.keys.toList()[index]);
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        ),
-        body: Navigator(
-          key: _navigatorKey,
-          onGenerateRoute: (settings) {
-            return MaterialPageRoute(builder: (_) => routes[settings.name]);
-          },
-        ));
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Einträge',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.document_scanner),
+            label: 'Bericht',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          _navigatorKey.currentState
+              ?.popAndPushNamed(routes.keys.toList()[index]);
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+      ),
+      body: ChangeNotifierProvider(
+          create: (context) => TripState(),
+          child: Navigator(
+            key: _navigatorKey,
+            onGenerateRoute: (settings) {
+              return MaterialPageRoute(builder: (_) => routes[settings.name]);
+            },
+          )),
+    );
   }
 }

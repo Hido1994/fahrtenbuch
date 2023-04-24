@@ -1,12 +1,20 @@
 import 'package:fahrtenbuch/persistence/model/trip.dart';
+import 'package:fahrtenbuch/service/trip_service.dart';
 import 'package:fahrtenbuch/view/screen/form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class TripListItem extends StatelessWidget {
+class TripListItem extends StatefulWidget {
   final Trip entry;
 
   const TripListItem({Key? key, required this.entry}) : super(key: key);
+
+  @override
+  State<TripListItem> createState() => _TripListItemState();
+}
+
+class _TripListItemState extends State<TripListItem> {
+  TripService tripService = TripService.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -16,23 +24,28 @@ class TripListItem extends StatelessWidget {
         leading: const Icon(
           Icons.drive_eta,
         ),
-        trailing: const Icon(Icons.edit),
+        trailing: IconButton(
+          icon: const Icon(Icons.delete),
+          onPressed: () {
+            tripService.delete(widget.entry.id!);
+          },
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${entry.vehicle} - ${entry.reason}',
+              '${widget.entry.vehicle} - ${widget.entry.reason}',
             ),
             Text(
-              '${entry.startLocation} - ${entry.endLocation}',
+              '${widget.entry.startLocation} - ${widget.entry.endLocation}',
             ),
             Text(
-              '${entry.startMileage} km - ${(entry.endMileage != null ? entry.endMileage! : '-')} km (${(entry.endMileage != null ? entry.endMileage! - entry.startMileage! : '-')} km)',
+              '${widget.entry.startMileage} km - ${(widget.entry.endMileage != null ? widget.entry.endMileage! : '-')} km (${(widget.entry.endMileage != null ? widget.entry.endMileage! - widget.entry.startMileage! : '-')} km)',
             ),
           ],
         ),
         title: Text(
-          '${DateFormat('dd.MM.yyyy').format(entry.startDate!)} - ${DateFormat('HH:mm').format(entry.startDate!)} - ${entry.endDate != null ? DateFormat('HH:mm').format(entry.endDate!) : 'offen'}',
+          '${DateFormat('dd.MM.yyyy').format(widget.entry.startDate!)} - ${DateFormat('HH:mm').format(widget.entry.startDate!)} - ${widget.entry.endDate != null ? DateFormat('HH:mm').format(widget.entry.endDate!) : 'offen'}',
         ),
         isThreeLine: true,
         onTap: () {
@@ -40,7 +53,7 @@ class TripListItem extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => FormScreen(
-                entryId: entry.id,
+                entryId: widget.entry.id,
               ),
             ),
           );

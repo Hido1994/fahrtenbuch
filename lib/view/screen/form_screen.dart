@@ -3,6 +3,9 @@ import 'package:fahrtenbuch/service/trip_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../../state/trip_state.dart';
 
 class FormScreen extends StatefulWidget {
   final int? entryId;
@@ -199,17 +202,20 @@ class _FormScreenState extends State<FormScreen> {
           if (_formKey.currentState!.validate()) {
             tripService
                 .save(Trip(
-                  id: widget.entryId,
-                  startDate: _selectedStartDate,
-                  endDate: _selectedEndDate,
-                  reason: _reasonController.text,
-                  vehicle: _vehicleController.text,
-                  startLocation: _startLocationController.text,
-                  endLocation: _endLocationController.text,
-                  startMileage: int.tryParse(_startMileageController.text),
-                  endMileage: int.tryParse(_endMileageController.text),
-                ))
-                .then((value) => Navigator.pop(context, value));
+              id: widget.entryId,
+              startDate: _selectedStartDate,
+              endDate: _selectedEndDate,
+              reason: _reasonController.text,
+              vehicle: _vehicleController.text,
+              startLocation: _startLocationController.text,
+              endLocation: _endLocationController.text,
+              startMileage: int.tryParse(_startMileageController.text),
+              endMileage: int.tryParse(_endMileageController.text),
+            ))
+                .then((value) {
+              Provider.of<TripState>(context, listen: false).add(value);
+              Navigator.pop(context, value);
+            });
           }
         },
         tooltip: 'Speichern',
