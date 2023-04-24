@@ -8,7 +8,6 @@ class PreferenceService {
 
   PreferenceService._privateConstructor();
 
-  @override
   Future<String> getDatabasePath() async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey('db_path')) {
@@ -18,7 +17,6 @@ class PreferenceService {
     }
   }
 
-  @override
   Future<void> saveDatabasePath(String value) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('db_path', value);

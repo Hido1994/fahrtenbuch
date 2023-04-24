@@ -1,4 +1,4 @@
-import 'package:fahrtenbuch/state/trip_state.dart';
+import 'package:fahrtenbuch/state/trip_provider_state.dart';
 import 'package:fahrtenbuch/view/screen/report_screen.dart';
 import 'package:fahrtenbuch/view/screen/settings_screen.dart';
 import 'package:fahrtenbuch/view/screen/trips_screen.dart';
@@ -20,11 +20,16 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       darkTheme: ThemeData.from(
-          colorScheme: ColorScheme.fromSwatch(
-              brightness: Brightness.dark,
-              backgroundColor: Colors.black,
-              accentColor: Colors.white,
-              cardColor: Colors.black)),
+              colorScheme: ColorScheme.fromSwatch(
+                  brightness: Brightness.dark,
+                  backgroundColor: Colors.black,
+                  accentColor: Colors.white,
+                  cardColor: Colors.black,
+                  primaryColorDark: Colors.green))
+          .copyWith(
+              snackBarTheme:
+                  const SnackBarThemeData(backgroundColor: Colors.black54,
+                    contentTextStyle: TextStyle(color: Colors.white),)),
       themeMode: ThemeMode.dark,
       home: const MainScreen(),
     );
@@ -81,7 +86,7 @@ class _MainScreen extends State<MainScreen> {
         },
       ),
       body: ChangeNotifierProvider(
-          create: (context) => TripState(),
+          create: (context) => TripProviderState(),
           child: Navigator(
             key: _navigatorKey,
             onGenerateRoute: (settings) {

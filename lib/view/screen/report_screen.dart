@@ -16,7 +16,7 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreen extends State<ReportScreen> {
-  TripService sqliteService = TripService.instance;
+  TripService tripService = TripService.instance;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _ReportScreen extends State<ReportScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           Excel excel = Excel.createExcel();
-          Sheet sheet = excel['Sheet1'];
+          Sheet sheet = excel['protokoll'];
           sheet.appendRow(['test', 'test']);
           Share.shareXFiles([XFile.fromData(Uint8List.fromList(excel.encode()!))]);
         },

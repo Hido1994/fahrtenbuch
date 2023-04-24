@@ -24,21 +24,21 @@ class TripRepository extends AbstractRepository<Trip, int> {
 
   @override
   Future<Trip> save(Trip entry) async {
-    if(entry.id == null) {
+    if (entry.id == null) {
       entry.id = await _dataSource.save(_table, entry.toJson());
     } else {
       await _dataSource.update(_table, entry.toJson());
     }
-      return entry;
+    return entry;
   }
 
   @override
-  Future<Trip> getById(int id) async{
+  Future<Trip> getById(int id) async {
     return Trip.fromJson(await _dataSource.getById(_table, id));
   }
 
   @override
-  Future<List> getDistinctValues(String column) async{
+  Future<List<dynamic>> getDistinctValues(String column) async {
     return await _dataSource.getDistinctValues(_table, column);
   }
 }

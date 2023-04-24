@@ -1,8 +1,10 @@
 import 'package:fahrtenbuch/persistence/model/trip.dart';
 import 'package:fahrtenbuch/service/trip_service.dart';
+import 'package:fahrtenbuch/state/trip_provider_state.dart';
 import 'package:fahrtenbuch/view/screen/form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class TripListItem extends StatefulWidget {
   final Trip entry;
@@ -10,10 +12,10 @@ class TripListItem extends StatefulWidget {
   const TripListItem({Key? key, required this.entry}) : super(key: key);
 
   @override
-  State<TripListItem> createState() => _TripListItemState();
+  State<TripListItem> createState() => _TripListItem();
 }
 
-class _TripListItemState extends State<TripListItem> {
+class _TripListItem extends State<TripListItem> {
   TripService tripService = TripService.instance;
 
   @override
@@ -28,6 +30,7 @@ class _TripListItemState extends State<TripListItem> {
           icon: const Icon(Icons.delete),
           onPressed: () {
             tripService.delete(widget.entry.id!);
+            Provider.of<TripProviderState>(context, listen: false).refresh();
           },
         ),
         subtitle: Column(

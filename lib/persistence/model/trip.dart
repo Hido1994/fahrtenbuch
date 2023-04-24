@@ -9,22 +9,22 @@ class Trip {
   DateTime? startDate;
   @JsonKey(fromJson: millisecondsToDateTime, toJson: datetimeToMilliseconds)
   DateTime? endDate;
-  String startLocation;
+  String? startLocation;
   String? endLocation;
-  String reason;
-  String vehicle;
+  String? reason;
+  String? vehicle;
   int? startMileage;
   int? endMileage;
   int? parent;
 
   Trip({
     this.id,
-    required this.startDate,
+    this.startDate,
     this.endDate,
-    required this.startLocation,
+    this.startLocation,
     this.endLocation,
-    required this.reason,
-    required this.vehicle,
+    this.reason,
+    this.vehicle,
     this.startMileage,
     this.endMileage,
     this.parent,

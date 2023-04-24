@@ -78,7 +78,7 @@ class SqliteDataSource extends DataSource {
   Future<List<dynamic>> getDistinctValues(String table, String column) async {
     Database db = await database;
     List<Map<String, dynamic>> result =
-        await db.query(table, columns: [column], distinct: true, orderBy: 'startDate DESC');
+        await db.query(table, columns: [column], distinct: true, orderBy: 'startDate DESC', where: '$column is not null');
     return result.map((e) => e[column]).toList();
   }
 

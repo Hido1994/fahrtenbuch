@@ -24,12 +24,16 @@ class TripService {
     return await _tripRepository.getById(id);
   }
 
-  Future<List> getReasons() async {
-    return await _tripRepository.getDistinctValues('reason');
+  Future<List<String>> getReasons() async {
+    return (await _tripRepository.getDistinctValues('reason'))
+        .map((e) => e as String)
+        .toList();
   }
 
-  Future<List<dynamic>> getVehicles() async {
-    return await _tripRepository.getDistinctValues('vehicle');
+  Future<List<String>> getVehicles() async {
+    return (await _tripRepository.getDistinctValues('vehicle'))
+        .map((e) => e as String)
+        .toList();
   }
 
   Future<DateTime?> getLastEndDate() async {
@@ -47,9 +51,12 @@ class TripService {
     return result.isNotEmpty ? result.first : null;
   }
 
-  Future<List> getLocations() async {
-    List startLocations = await _tripRepository.getDistinctValues('startLocation');
+  Future<List<String>> getLocations() async {
+    List startLocations =
+        await _tripRepository.getDistinctValues('startLocation');
     List endLocations = await _tripRepository.getDistinctValues('endLocation');
-    return {...startLocations, ...endLocations}.toList();
+    return {...startLocations, ...endLocations}
+        .map((e) => e as String)
+        .toList();
   }
 }
