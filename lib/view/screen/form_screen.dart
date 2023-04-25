@@ -35,7 +35,7 @@ class _FormScreenState extends State<FormScreen> {
 
     if (widget.entryId == null) {
       DateTime now = DateTime.now();
-      now = now.subtract(Duration(minutes: now.minute, seconds: now.second));
+      now = now.subtract(Duration(seconds: now.second));
       trip.startDate = now;
 
       if (reasons.isNotEmpty) {
@@ -80,56 +80,65 @@ class _FormScreenState extends State<FormScreen> {
             child: Column(
               children: <Widget>[
                 DateTimePickerTextFormField(
-                    title: 'Abfahrt',
-                    initialValue: trip.startDate,
-                    onChanged: (date) {
-                      trip.startDate = date;
-                    }),
+                  key: UniqueKey(),
+                  title: 'Abfahrt',
+                  initialValue: trip.startDate,
+                  onChanged: (date) {
+                    trip.startDate = date;
+                  },
+                ),
                 DateTimePickerTextFormField(
+                    key: UniqueKey(),
                     title: 'Ankunft',
                     initialValue: trip.endDate,
                     onChanged: (date) {
                       trip.endDate = date;
                     }),
                 AutocompleteTextFormField(
+                    key: UniqueKey(),
                     title: 'Zweck',
                     options: vehicles,
-                    required: true,
+                    initialValue: trip.reason,
                     onChanged: (value) {
                       trip.reason = value;
                     }),
                 AutocompleteTextFormField(
+                    key: UniqueKey(),
                     title: 'Fahrzeug',
                     options: vehicles,
-                    required: true,
+                    initialValue: trip.vehicle,
                     onChanged: (value) {
                       trip.vehicle = value;
                     }),
                 AutocompleteTextFormField(
+                    key: UniqueKey(),
                     title: 'Abfahrtsort',
                     options: locations,
-                    required: true,
+                    initialValue: trip.startLocation,
                     onChanged: (value) {
                       trip.startLocation = value;
                     }),
                 AutocompleteTextFormField(
+                    key: UniqueKey(),
                     title: 'Ankunftsort',
                     options: locations,
-                    required: true,
+                    initialValue: trip.endLocation,
                     onChanged: (value) {
-                      trip.startLocation = value;
+                      trip.endLocation = value;
                     }),
                 AutocompleteTextFormField(
+                    key: UniqueKey(),
                     title: 'KM-Abfahrt',
                     options: const [],
-                    required: true,
+                    initialValue: trip.startMileage?.toString(),
                     onChanged: (value) {
                       trip.startMileage = int.tryParse(value);
                     }),
                 AutocompleteTextFormField(
+                    key: UniqueKey(),
                     title: 'KM-Ankunft',
                     options: const [],
-                    required: true,
+                    initialValue: trip.endMileage?.toString(),
                     onChanged: (value) {
                       trip.endMileage = int.tryParse(value);
                     }),

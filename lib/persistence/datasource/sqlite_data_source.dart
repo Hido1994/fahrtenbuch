@@ -30,8 +30,8 @@ class SqliteDataSource extends DataSource {
   _onCreate(Database db, int version) async {
     await db.execute("CREATE TABLE Trip ("
         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
-        "startDate INTEGER NOT NULL,"
-        "endDate INTEGER NOT NULL,"
+        "startDate INTEGER,"
+        "endDate INTEGER,"
         "startLocation TEXT,"
         "endLocation TEXT,"
         "reason TEXT,"

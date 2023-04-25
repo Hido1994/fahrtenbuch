@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class TripListItem extends StatefulWidget {
+
   final Trip entry;
 
   const TripListItem({Key? key, required this.entry}) : super(key: key);
@@ -16,6 +17,10 @@ class TripListItem extends StatefulWidget {
 }
 
 class _TripListItem extends State<TripListItem> {
+  static final DateFormat dateTimeFormat = DateFormat('dd.MM.yyyy HH:mm');
+  static final DateFormat timeFormat = DateFormat('HH:mm');
+  static final NumberFormat numberFormat = NumberFormat('#,### km', 'de_AT');
+
   TripService tripService = TripService.instance;
 
   @override
@@ -31,24 +36,29 @@ class _TripListItem extends State<TripListItem> {
           onPressed: () {
             tripService.delete(widget.entry.id!);
             Provider.of<TripProviderState>(context, listen: false).refresh();
+
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Fahrt gelöscht!'),
+              behavior: SnackBarBehavior.floating,
+            ));
           },
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${widget.entry.vehicle} - ${widget.entry.reason}',
+              '${widget.entry.startLocation != null ? widget.entry.startLocation! : 'TBD'} - ${widget.entry.endLocation != null ? widget.entry.endLocation! : 'TBD'}',
             ),
             Text(
-              '${widget.entry.startLocation} - ${widget.entry.endLocation}',
+              '${widget.entry.vehicle != null ? widget.entry.vehicle! : 'TBD'} - ${widget.entry.reason != null ? widget.entry.reason! : 'TBD'}',
             ),
             Text(
-              '${widget.entry.startMileage} km - ${(widget.entry.endMileage != null ? widget.entry.endMileage! : '-')} km (${(widget.entry.endMileage != null ? widget.entry.endMileage! - widget.entry.startMileage! : '-')} km)',
+              '${(widget.entry.startMileage != null ? numberFormat.format(widget.entry.startMileage!) : 'TBD')} - ${(widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!) : 'TBD')} (${(widget.entry.startMileage != null && widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!-widget.entry.startMileage!) : 'TBD')})',
             ),
           ],
         ),
         title: Text(
-          '${DateFormat('dd.MM.yyyy').format(widget.entry.startDate!)} - ${DateFormat('HH:mm').format(widget.entry.startDate!)} - ${widget.entry.endDate != null ? DateFormat('HH:mm').format(widget.entry.endDate!) : 'offen'}',
+          '${dateTimeFormat.format(widget.entry.startDate!)} - ${widget.entry.endDate != null ? timeFormat.format(widget.entry.endDate!) : 'TBD'}',
         ),
         isThreeLine: true,
         onTap: () {
