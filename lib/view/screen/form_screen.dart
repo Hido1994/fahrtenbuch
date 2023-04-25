@@ -9,8 +9,9 @@ import '../../state/trip_provider_state.dart';
 
 class FormScreen extends StatefulWidget {
   final int? entryId;
+  final int? parentId;
 
-  const FormScreen({Key? key, this.entryId}) : super(key: key);
+  const FormScreen({Key? key, this.entryId, this.parentId}) : super(key: key);
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -32,6 +33,7 @@ class _FormScreenState extends State<FormScreen> {
     List<String> locations = await tripService.getLocations();
 
     Trip trip = Trip();
+    trip.parent = widget.parentId;
 
     if (widget.entryId == null) {
       DateTime now = DateTime.now();

@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class TripListItem extends StatefulWidget {
-
   final Trip entry;
 
   const TripListItem({Key? key, required this.entry}) : super(key: key);
@@ -26,10 +25,11 @@ class _TripListItem extends State<TripListItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(5),
       child: ListTile(
-        leading: const Icon(
-          Icons.drive_eta,
+        leading: Icon(
+          widget.entry.parent == null
+              ? Icons.drive_eta_outlined
+              : Icons.arrow_forward_rounded,
         ),
         trailing: IconButton(
           icon: const Icon(Icons.delete),
@@ -53,7 +53,7 @@ class _TripListItem extends State<TripListItem> {
               '${widget.entry.vehicle != null ? widget.entry.vehicle! : 'TBD'} - ${widget.entry.reason != null ? widget.entry.reason! : 'TBD'}',
             ),
             Text(
-              '${(widget.entry.startMileage != null ? numberFormat.format(widget.entry.startMileage!) : 'TBD')} - ${(widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!) : 'TBD')} (${(widget.entry.startMileage != null && widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!-widget.entry.startMileage!) : 'TBD')})',
+              '${(widget.entry.startMileage != null ? numberFormat.format(widget.entry.startMileage!) : 'TBD')} - ${(widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!) : 'TBD')} (${(widget.entry.startMileage != null && widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage! - widget.entry.startMileage!) : 'TBD')})',
             ),
           ],
         ),
@@ -67,6 +67,16 @@ class _TripListItem extends State<TripListItem> {
             MaterialPageRoute(
               builder: (context) => FormScreen(
                 entryId: widget.entry.id,
+              ),
+            ),
+          );
+        },
+        onLongPress: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FormScreen(
+                parentId: widget.entry.parent ?? widget.entry.id,
               ),
             ),
           );
