@@ -23,8 +23,12 @@ class SqliteDataSource extends DataSource {
 
   _initDB() async {
     String path = await preferenceService.getDatabasePath();
-    var db = await openDatabase(path, version: 1, onCreate: _onCreate);
+    var db = await openDatabase(path, version: 1, onConfigure: _onConfigure, onCreate: _onCreate);
     return db;
+  }
+
+  _onConfigure(Database db) async {
+    await db.execute("PRAGMA foreign_keys = ON");
   }
 
   _onCreate(Database db, int version) async {
@@ -39,7 +43,7 @@ class SqliteDataSource extends DataSource {
         "startMileage INTEGER,"
         "endMileage INTEGER,"
         "parent INTEGER, "
-        "FOREIGN KEY (parent) REFERENCES Fahrtenprotokoll (id) ON DELETE CASCADE "
+        "FOREIGN KEY (parent) REFERENCES Trip (id) ON DELETE CASCADE "
         ")");
   }
 

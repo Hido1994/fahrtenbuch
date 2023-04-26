@@ -24,16 +24,54 @@ class _TripListItem extends State<TripListItem> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ListTile(
-        leading: Icon(
-          widget.entry.parent == null
-              ? Icons.drive_eta_outlined
-              : Icons.arrow_forward_rounded,
+    return Dismissible(
+        key: ObjectKey(widget.entry.id!),
+        background: Container(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.only(left: 20),
+          color: Colors.green,
+          child: const Icon(Icons.add),
         ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete),
-          onPressed: () {
+        secondaryBackground: Container(
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 20),
+          color: Colors.red,
+          child: const Icon(Icons.delete),
+        ),
+        confirmDismiss: (direction) async {
+          if (DismissDirection.endToStart == direction) {
+            return await showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Löschen"),
+                  content: const Text("Sind Sie sicher?"),
+                  actions: <Widget>[
+                    TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: const Text("Löschen")),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text("Abbrechen"),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormScreen(
+                  parentId: widget.entry.parent ?? widget.entry.id,
+                ),
+              ),
+            );
+            return false;
+          }
+        },
+        onDismissed: (direction) {
+          if (DismissDirection.endToStart == direction) {
             tripService.delete(widget.entry.id!);
             Provider.of<TripProviderState>(context, listen: false).refresh();
 
@@ -41,47 +79,56 @@ class _TripListItem extends State<TripListItem> {
               content: Text('Fahrt gelöscht!'),
               behavior: SnackBarBehavior.floating,
             ));
+          }
+        },
+        child: ListTile(
+          leading: Icon(
+            widget.entry.parent == null
+                ? Icons.drive_eta_outlined
+                : Icons.arrow_forward_rounded,
+          ),
+          trailing: IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FormScreen(
+                    entryId: widget.entry.id,
+                    finalize: true,
+                  ),
+                ),
+              );
+            },
+          ),
+          title: Text(
+            '${dateTimeFormat.format(widget.entry.startDate!)} - ${widget.entry.endDate != null ? timeFormat.format(widget.entry.endDate!) : 'TBD'}',
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${widget.entry.startLocation != null ? widget.entry.startLocation! : 'TBD'} - ${widget.entry.endLocation != null ? widget.entry.endLocation! : 'TBD'}',
+              ),
+              Text(
+                '${widget.entry.vehicle != null ? widget.entry.vehicle! : 'TBD'} - ${widget.entry.reason != null ? widget.entry.reason! : 'TBD'}',
+              ),
+              if(widget.entry.startMileage != null) Text(
+                '${(widget.entry.startMileage != null ? numberFormat.format(widget.entry.startMileage!) : 'TBD')} - ${(widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!) : 'TBD')} (${(widget.entry.startMileage != null && widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage! - widget.entry.startMileage!) : 'TBD')})',
+              ),
+            ],
+          ),
+          isThreeLine: true,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FormScreen(
+                  entryId: widget.entry.id,
+                ),
+              ),
+            );
           },
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${widget.entry.startLocation != null ? widget.entry.startLocation! : 'TBD'} - ${widget.entry.endLocation != null ? widget.entry.endLocation! : 'TBD'}',
-            ),
-            Text(
-              '${widget.entry.vehicle != null ? widget.entry.vehicle! : 'TBD'} - ${widget.entry.reason != null ? widget.entry.reason! : 'TBD'}',
-            ),
-            Text(
-              '${(widget.entry.startMileage != null ? numberFormat.format(widget.entry.startMileage!) : 'TBD')} - ${(widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!) : 'TBD')} (${(widget.entry.startMileage != null && widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage! - widget.entry.startMileage!) : 'TBD')})',
-            ),
-          ],
-        ),
-        title: Text(
-          '${dateTimeFormat.format(widget.entry.startDate!)} - ${widget.entry.endDate != null ? timeFormat.format(widget.entry.endDate!) : 'TBD'}',
-        ),
-        isThreeLine: true,
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FormScreen(
-                entryId: widget.entry.id,
-              ),
-            ),
-          );
-        },
-        onLongPress: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FormScreen(
-                parentId: widget.entry.parent ?? widget.entry.id,
-              ),
-            ),
-          );
-        },
-      ),
-    );
+        ));
   }
 }

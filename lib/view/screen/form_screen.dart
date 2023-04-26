@@ -10,8 +10,11 @@ import '../../state/trip_provider_state.dart';
 class FormScreen extends StatefulWidget {
   final int? entryId;
   final int? parentId;
+  final bool finalize;
 
-  const FormScreen({Key? key, this.entryId, this.parentId}) : super(key: key);
+  const FormScreen(
+      {Key? key, this.entryId, this.parentId, this.finalize = false})
+      : super(key: key);
 
   @override
   State<FormScreen> createState() => _FormScreenState();
@@ -28,6 +31,9 @@ class _FormScreenState extends State<FormScreen> {
   List<String> locations = [];
 
   Future<void> _initTrip() async {
+    DateTime now = DateTime.now();
+    now = now.subtract(Duration(seconds: now.second));
+
     List<String> vehicles = await tripService.getVehicles();
     List<String> reasons = await tripService.getReasons();
     List<String> locations = await tripService.getLocations();
@@ -36,8 +42,6 @@ class _FormScreenState extends State<FormScreen> {
     trip.parent = widget.parentId;
 
     if (widget.entryId == null) {
-      DateTime now = DateTime.now();
-      now = now.subtract(Duration(seconds: now.second));
       trip.startDate = now;
 
       if (reasons.isNotEmpty) {
@@ -51,6 +55,10 @@ class _FormScreenState extends State<FormScreen> {
       trip.startLocation = await tripService.getLastEndLocation();
     } else {
       trip = await tripService.getById(widget.entryId!);
+    }
+
+    if (this.trip.endDate == null && widget.finalize) {
+      trip.endDate = now;
     }
 
     setState(() {

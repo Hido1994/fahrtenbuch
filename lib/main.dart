@@ -27,10 +27,11 @@ class MyApp extends StatelessWidget {
                   cardColor: Colors.black,
                   primaryColorDark: Colors.green))
           .copyWith(
-              snackBarTheme:
-                  const SnackBarThemeData(backgroundColor: Colors.black54,
-                    contentTextStyle: TextStyle(color: Colors.white),)),
-      themeMode: ThemeMode.dark,
+              snackBarTheme: const SnackBarThemeData(
+        backgroundColor: Colors.black54,
+        contentTextStyle: TextStyle(color: Colors.white),
+      )),
+      themeMode: ThemeMode.light,
       home: const MainScreen(),
     );
   }
