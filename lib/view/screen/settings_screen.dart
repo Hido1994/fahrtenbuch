@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:fahrtenbuch/persistence/datasource/sqlite_data_source.dart';
 import 'package:fahrtenbuch/service/preference_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -52,6 +55,25 @@ class _SettingsScreen extends State<SettingsScreen> {
                   }
                 },
               ),
+              TextButton(
+                  onPressed: () async {
+                    ScaffoldMessengerState messenger =
+                        ScaffoldMessenger.of(context);
+
+                    ShareResult result = await Share.shareXFiles([
+                      XFile.fromData(
+                          File((await preferenceService.getDatabasePath()))
+                              .readAsBytesSync(),
+                          mimeType: 'db'),
+                    ]);
+                    if (ShareResultStatus.success == result.status) {
+                      messenger.showSnackBar(const SnackBar(
+                        content: Text('Datenbank exportiert!'),
+                        behavior: SnackBarBehavior.floating,
+                      ));
+                    }
+                  },
+                  child: const Text('Export')),
             ]),
           ),
         ),

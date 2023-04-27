@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.black54,
         contentTextStyle: TextStyle(color: Colors.white),
       )),
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       home: const MainScreen(),
     );
   }
