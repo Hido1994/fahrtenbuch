@@ -36,19 +36,24 @@ class TripService {
         .toList();
   }
 
-  Future<DateTime?> getLastEndDate() async {
-    List result = await _tripRepository.getDistinctValues('endDate');
-    return Trip.millisecondsToDateTime(result.first);
+  Future<List<String>> getTypes() async {
+    return (await _tripRepository.getDistinctValues('type'))
+        .map((e) => e as String)
+        .toList();
   }
 
-  Future<int?> getLastEndMileage() async {
-    List result = await _tripRepository.getDistinctValues('endMileage');
-    return result.isNotEmpty ? result.first : null;
+  Future<int?> getLastEndMileage(String? vehicle) async {
+    if(vehicle != null) {
+      List<Trip> result = await _tripRepository.getAll(where: 'vehicle = "$vehicle"');
+      return result.isNotEmpty ? result.first.endMileage : null;
+    }
+
+    return null;
   }
 
   Future<String?> getLastEndLocation() async {
-    List result = await _tripRepository.getDistinctValues('endLocation');
-    return result.isNotEmpty ? result.first : null;
+    List<Trip> result = await _tripRepository.getAll(where: 'endLocation is not null');
+    return result.isNotEmpty ? result.first.endLocation : null;
   }
 
   Future<List<String>> getLocations() async {

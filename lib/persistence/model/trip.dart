@@ -9,6 +9,7 @@ class Trip {
   DateTime? startDate;
   @JsonKey(fromJson: millisecondsToDateTime, toJson: datetimeToMilliseconds)
   DateTime? endDate;
+  String? type;
   String? startLocation;
   String? endLocation;
   String? reason;
@@ -21,6 +22,7 @@ class Trip {
     this.id,
     this.startDate,
     this.endDate,
+    this.type,
     this.startLocation,
     this.endLocation,
     this.reason,

@@ -12,22 +12,25 @@ class ReportService {
 
   ReportService._privateConstructor();
 
-  Future<Excel> generateExcel(int? year) async {
+  Future<Excel> generateExcel(int? year, String? type) async {
     Excel excel = Excel.createExcel();
 
+    String? where;
     List<Trip> trips;
     if (year != null) {
       int yearStartMilliseconds = DateTime(year = year).millisecondsSinceEpoch;
       int yearEndMilliseconds =
           DateTime(year = year + 1).millisecondsSinceEpoch;
-      trips = await tripService.getAll(
-          where:
-              'startDate > $yearStartMilliseconds AND startDate < $yearEndMilliseconds',
-          orderBy: 'startDate ASC');
-    } else {
-      trips = await tripService.getAll(
-          orderBy: 'startDate ASC');
+      where = '${where==null ? '' : '$where AND'} startDate > $yearStartMilliseconds AND startDate < $yearEndMilliseconds';
     }
+
+    if(type != null){
+      where = '${where==null ? '' : '$where AND'} type = "$type"';
+    }
+
+    trips = await tripService.getAll(
+        where: where,
+        orderBy: 'startDate ASC');
 
     await _generateProtokollSheet(excel, trips);
     await _generateReiseSheet(excel, trips);
@@ -53,6 +56,7 @@ class ReportService {
       'KM-Abfahrt',
       'KM-Ankunft',
       'gefahren (km)',
+      'Art',
     ];
     sheet.appendRow(header);
     sheet.row(0).forEach((element) {
@@ -75,6 +79,7 @@ class ReportService {
         element.startMileage,
         element.endMileage ?? element.startMileage,
         Formula.custom("H$rowIndex-G$rowIndex"),
+        element.type,
       ];
       sheet.appendRow(row);
       rowIndex++;
@@ -94,6 +99,7 @@ class ReportService {
       'Reiseweg',
       'Zweck',
       'Fahrzeuge',
+      'Art'
     ];
     sheet.appendRow(header);
     sheet.row(0).forEach((element) {
@@ -115,7 +121,8 @@ class ReportService {
               : null,
           '${element.startLocation} - ${element.endLocation}',
           element.reason,
-          element.vehicle
+          element.vehicle,
+          element.type
         ];
       } else {
         row[1] = element.endDate != null

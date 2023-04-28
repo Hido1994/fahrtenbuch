@@ -6,6 +6,7 @@ class AutocompleteTextFormField extends StatefulWidget {
   final String title;
   final List<String> options;
   final ValueSetter<String> onChanged;
+  final ValueSetter<String>? onSelected;
   final TextInputType textInputType;
   final FormFieldValidator<String>? validator;
 
@@ -14,6 +15,7 @@ class AutocompleteTextFormField extends StatefulWidget {
       required this.title,
       required this.options,
       required this.onChanged,
+      this.onSelected,
       this.initialValue,
       this.textInputType = TextInputType.text,
       this.validator})
@@ -30,19 +32,19 @@ class _AutocompleteTextFormFieldState extends State<AutocompleteTextFormField> {
     return Autocomplete(
       initialValue: TextEditingValue(text: widget.initialValue ?? ''),
       optionsBuilder: (TextEditingValue textEditingValue) {
-        if (textEditingValue.text == '') {
-          return widget.options;
-        } else {
-          List<String> matches = <String>[];
-          matches.addAll(widget.options);
-
-          matches.retainWhere((s) {
-            return s
-                .toLowerCase()
-                .contains(textEditingValue.text.toLowerCase());
-          });
-          return matches;
-        }
+        // if (textEditingValue.text == '') {
+        return widget.options;
+        // } else {
+        //   List<String> matches = <String>[];
+        //   matches.addAll(widget.options);
+        //
+        //   matches.retainWhere((s) {
+        //     return s
+        //         .toLowerCase()
+        //         .contains(textEditingValue.text.toLowerCase());
+        //   });
+        //   return matches;
+        // }
       },
       fieldViewBuilder: (BuildContext context,
           TextEditingController fieldTextEditingController,
@@ -60,7 +62,7 @@ class _AutocompleteTextFormFieldState extends State<AutocompleteTextFormField> {
           validator: widget.validator,
         );
       },
-      onSelected: widget.onChanged,
+      onSelected: widget.onSelected ?? widget.onChanged,
     );
   }
 }

@@ -29,6 +29,7 @@ class _FormScreenState extends State<FormScreen> {
   List<String> vehicles = [];
   List<String> reasons = [];
   List<String> locations = [];
+  List<String> types = [];
 
   Future<void> _initTrip() async {
     DateTime now = DateTime.now();
@@ -37,6 +38,7 @@ class _FormScreenState extends State<FormScreen> {
     List<String> vehicles = await tripService.getVehicles();
     List<String> reasons = await tripService.getReasons();
     List<String> locations = await tripService.getLocations();
+    List<String> types = await tripService.getTypes();
 
     Trip trip = Trip();
     trip.parent = widget.parentId;
@@ -50,8 +52,11 @@ class _FormScreenState extends State<FormScreen> {
       if (vehicles.isNotEmpty) {
         trip.vehicle = vehicles[0];
       }
+      if (types.isNotEmpty) {
+        trip.type = types[0];
+      }
 
-      trip.startMileage = await tripService.getLastEndMileage();
+      trip.startMileage = await tripService.getLastEndMileage(trip.vehicle);
       trip.startLocation = await tripService.getLastEndLocation();
     } else {
       trip = await tripService.getById(widget.entryId!);
@@ -66,6 +71,7 @@ class _FormScreenState extends State<FormScreen> {
       this.vehicles = vehicles;
       this.reasons = reasons;
       this.locations = locations;
+      this.types = types;
     });
   }
 
@@ -113,6 +119,15 @@ class _FormScreenState extends State<FormScreen> {
                     return null;
                   },
                 ),
+
+                AutocompleteTextFormField(
+                    key: UniqueKey(),
+                    title: 'Art',
+                    options: types,
+                    initialValue: trip.type,
+                    onChanged: (value) {
+                      trip.type = value;
+                    }),
                 AutocompleteTextFormField(
                     key: UniqueKey(),
                     title: 'Zweck',
@@ -128,6 +143,17 @@ class _FormScreenState extends State<FormScreen> {
                     initialValue: trip.vehicle,
                     onChanged: (value) {
                       trip.vehicle = value;
+                    },
+                    onSelected: (value) {
+                      trip.vehicle = value;
+
+                      tripService
+                          .getLastEndMileage(value)
+                          .then((value) =>
+                          setState(() {
+                            trip.startMileage = value;
+                            trip.endMileage = null;
+                          }));
                     }),
                 AutocompleteTextFormField(
                     key: UniqueKey(),

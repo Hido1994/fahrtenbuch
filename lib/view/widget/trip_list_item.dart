@@ -111,11 +111,18 @@ class _TripListItem extends State<TripListItem> {
                 '${widget.entry.startLocation != null ? widget.entry.startLocation! : 'TBD'} - ${widget.entry.endLocation != null ? widget.entry.endLocation! : 'TBD'}',
               ),
               Text(
-                '${widget.entry.vehicle != null ? widget.entry.vehicle! : 'TBD'} - ${widget.entry.reason != null ? widget.entry.reason! : 'TBD'}',
+                '${widget.entry.type != null ? widget.entry.type! : 'TBD'} - ${widget.entry.reason != null ? widget.entry.reason! : 'TBD'}',
               ),
-              if(widget.entry.startMileage != null) Text(
-                '${(widget.entry.startMileage != null ? numberFormat.format(widget.entry.startMileage!) : 'TBD')} - ${(widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!) : 'TBD')} (${(widget.entry.startMileage != null && widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage! - widget.entry.startMileage!) : 'TBD')})',
+              const Text(
+                '',
               ),
+              Text(
+                widget.entry.vehicle != null ? widget.entry.vehicle! : 'TBD',
+              ),
+              if (widget.entry.startMileage != null)
+                Text(
+                  '${(widget.entry.startMileage != null ? numberFormat.format(widget.entry.startMileage!) : 'TBD')} - ${(widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!) : 'TBD')} (${(widget.entry.startMileage != null && widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage! - widget.entry.startMileage!) : 'TBD')})',
+                ),
             ],
           ),
           isThreeLine: true,

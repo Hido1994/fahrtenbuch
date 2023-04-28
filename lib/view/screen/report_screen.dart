@@ -19,17 +19,26 @@ class _ReportScreen extends State<ReportScreen> {
   TripService tripService = TripService.instance;
 
   List<int> years = [];
+  List<String> types = [];
 
   int? selectedYear;
+  String? selectedType;
+
+  void _init() async {
+    List<int> years = await tripService.getYears();
+    List<String> types = await tripService.getTypes();
+
+    setState(() {
+      this.years = years;
+      this.types = types;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
 
-    tripService.getYears().then((value) => setState(() {
-          years = value;
-          selectedYear = years[0];
-        }));
+    _init();
   }
 
   @override
@@ -42,21 +51,38 @@ class _ReportScreen extends State<ReportScreen> {
           padding: const EdgeInsets.all(30),
           child: SingleChildScrollView(
             child: Column(children: <Widget>[
-              if(years.isNotEmpty) DropdownButton(
-                  isExpanded: true,
-                  value: selectedYear,
-                  // dropdownColor: Colors.grey.shade900..withOpacity(0.5),
-                  items: years.map<DropdownMenuItem<int>>((int item) {
-                    return DropdownMenuItem<int>(
-                      value: item,
-                      child: Text(item.toString()),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedYear = value;
-                    });
-                  }),
+              if (years.isNotEmpty)
+                DropdownButton(
+                    hint: const Text('Jahr'),
+                    isExpanded: true,
+                    value: selectedYear,
+                    items: years.map<DropdownMenuItem<int>>((int item) {
+                      return DropdownMenuItem<int>(
+                        value: item,
+                        child: Text(item.toString()),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedYear = value;
+                      });
+                    }),
+              if (types.isNotEmpty)
+                DropdownButton(
+                    hint: const Text('Art'),
+                    isExpanded: true,
+                    value: selectedType,
+                    items: types.map<DropdownMenuItem<String>>((String item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedType = value;
+                      });
+                    })
             ]),
           ),
         ),
@@ -65,7 +91,8 @@ class _ReportScreen extends State<ReportScreen> {
         onPressed: () async {
           ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
 
-          Excel excel = await reportService.generateExcel(selectedYear);
+          Excel excel =
+              await reportService.generateExcel(selectedYear, selectedType);
           ShareResult result = await Share.shareXFiles([
             XFile.fromData(Uint8List.fromList(excel.encode()!),
                 mimeType: 'xlsx')

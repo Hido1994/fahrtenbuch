@@ -35,6 +35,7 @@ class SqliteDataSource extends DataSource {
         "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
         "startDate INTEGER,"
         "endDate INTEGER,"
+        "type TEXT,"
         "startLocation TEXT,"
         "endLocation TEXT,"
         "reason TEXT,"
