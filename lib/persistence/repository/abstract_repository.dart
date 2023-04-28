@@ -1,5 +1,5 @@
 abstract class AbstractRepository<T, ID> {
-  Future<List<T>> getAll();
+  Future<List<T>> getAll({String? where, String orderBy = 'startDate DESC'});
 
   Future<T> save(T entry);
 

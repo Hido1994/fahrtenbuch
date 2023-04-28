@@ -12,8 +12,8 @@ class TripService {
     return await _tripRepository.delete(id);
   }
 
-  Future<List<Trip>> getAll() async {
-    return await _tripRepository.getAll();
+  Future<List<Trip>> getAll({String? where, String orderBy = 'startDate DESC'}) async {
+    return await _tripRepository.getAll(where: where, orderBy: orderBy);
   }
 
   Future<Trip> save(Trip entry) async {
@@ -57,6 +57,13 @@ class TripService {
     List endLocations = await _tripRepository.getDistinctValues('endLocation');
     return {...startLocations, ...endLocations}
         .map((e) => e as String)
+        .toList();
+  }
+
+  Future<List<int>> getYears() async {
+    List years = await _tripRepository.getDistinctValues('startDate');
+    return years.map((e) => DateTime.fromMillisecondsSinceEpoch(e).year)
+        .toSet()
         .toList();
   }
 }

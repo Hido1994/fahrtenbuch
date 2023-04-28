@@ -12,16 +12,31 @@ class ReportService {
 
   ReportService._privateConstructor();
 
-  Future<Excel> generateExcel() async {
+  Future<Excel> generateExcel(int? year) async {
     Excel excel = Excel.createExcel();
-    await _generateProtokollSheet(excel);
-    await _generateReiseSheet(excel);
+
+    List<Trip> trips;
+    if (year != null) {
+      int yearStartMilliseconds = DateTime(year = year).millisecondsSinceEpoch;
+      int yearEndMilliseconds =
+          DateTime(year = year + 1).millisecondsSinceEpoch;
+      trips = await tripService.getAll(
+          where:
+              'startDate > $yearStartMilliseconds AND startDate < $yearEndMilliseconds',
+          orderBy: 'startDate ASC');
+    } else {
+      trips = await tripService.getAll(
+          orderBy: 'startDate ASC');
+    }
+
+    await _generateProtokollSheet(excel, trips);
+    await _generateReiseSheet(excel, trips);
 
     excel.delete('Sheet1');
     return excel;
   }
 
-  Future<void> _generateProtokollSheet(Excel excel) async {
+  Future<void> _generateProtokollSheet(Excel excel, List<Trip> trips) async {
     Sheet sheet = excel['Protokoll'];
 
     CellStyle cellStyle = CellStyle(
@@ -44,9 +59,8 @@ class ReportService {
       element!.cellStyle = cellStyle;
     });
 
-    List<Trip> trips = await tripService.getAll();
     int rowIndex = 2;
-    for (var element in trips.reversed) {
+    for (var element in trips) {
       List<dynamic> row = [
         element.startDate != null
             ? dateTimeFormat.format(element.startDate!)
@@ -67,7 +81,7 @@ class ReportService {
     }
   }
 
-  Future<void> _generateReiseSheet(Excel excel) async {
+  Future<void> _generateReiseSheet(Excel excel, List<Trip> trips) async {
     Sheet sheet = excel['Reise'];
 
     CellStyle cellStyle = CellStyle(
@@ -86,9 +100,8 @@ class ReportService {
       element!.cellStyle = cellStyle;
     });
 
-    List<Trip> trips = await tripService.getAll();
     List<dynamic> row = [];
-    for (var element in trips.reversed) {
+    for (var element in trips) {
       if (element.parent == null) {
         if (row.isNotEmpty) {
           sheet.appendRow(row);

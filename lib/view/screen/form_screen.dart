@@ -85,7 +85,7 @@ class _FormScreenState extends State<FormScreen> {
       body: Form(
         key: _formKey,
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(30),
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[

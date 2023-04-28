@@ -36,7 +36,7 @@ class _SettingsScreen extends State<SettingsScreen> {
       body: Form(
         key: _formKey,
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(30),
           child: SingleChildScrollView(
             child: Column(children: <Widget>[
               TextFormField(
@@ -52,6 +52,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                     _databasePathController.text = result.files.single.path!;
                     preferenceService
                         .saveDatabasePath(result.files.single.path!);
+                    sqliteDataSource.initDB();
                   }
                 },
               ),

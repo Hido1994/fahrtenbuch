@@ -17,14 +17,13 @@ class SqliteDataSource extends DataSource {
       return _database!;
     }
 
-    _database = await _initDB();
+    await initDB();
     return _database!;
   }
 
-  _initDB() async {
+  initDB() async {
     String path = await preferenceService.getDatabasePath();
-    var db = await openDatabase(path, version: 1, onConfigure: _onConfigure, onCreate: _onCreate);
-    return db;
+    _database = await openDatabase(path, version: 1, onConfigure: _onConfigure, onCreate: _onCreate);
   }
 
   _onConfigure(Database db) async {
@@ -55,10 +54,11 @@ class SqliteDataSource extends DataSource {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getAll(String table) async {
+  Future<List<Map<String, dynamic>>> getAll(String table,
+      {String? where, String? orderBy}) async {
     Database db = await database;
     List<Map<String, dynamic>> result =
-        await db.query(table, orderBy: 'startDate DESC');
+        await db.query(table, where: where, orderBy: orderBy);
     return result;
   }
 

@@ -17,8 +17,10 @@ class TripRepository extends AbstractRepository<Trip, int> {
   }
 
   @override
-  Future<List<Trip>> getAll() async {
-    List<Map<String, dynamic>> result = await _dataSource.getAll(_table);
+  Future<List<Trip>> getAll(
+      {String? where, String orderBy = 'startDate DESC'}) async {
+    List<Map<String, dynamic>> result =
+        await _dataSource.getAll(_table, where: where, orderBy: orderBy);
     return result.map((e) => Trip.fromJson(e)).toList();
   }
 

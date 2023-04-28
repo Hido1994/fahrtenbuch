@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
                   accentColor: Colors.white,
                   cardColor: Colors.black))
           .copyWith(
+              canvasColor: Colors.grey.shade900.withOpacity(0.8),
               appBarTheme: const AppBarTheme(
                   elevation: 0,
                   titleTextStyle:

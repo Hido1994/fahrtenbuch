@@ -27,7 +27,7 @@ class _MyTripsScreen extends State<TripsScreen> {
       appBar: AppBar(title: const Text('Fahrtenbuch')),
       body: Consumer<TripProviderState>(builder: (context, state, child) {
         return ListView.separated(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.only(top: 20),
           separatorBuilder: (context, index) => const Divider(),
           itemBuilder: (context, index) {
             return TripListItem(entry: state.trips[index]);
