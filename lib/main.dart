@@ -24,13 +24,16 @@ class MyApp extends StatelessWidget {
                   brightness: Brightness.dark,
                   backgroundColor: Colors.black,
                   accentColor: Colors.white,
-                  cardColor: Colors.black,
-                  primaryColorDark: Colors.green))
+                  cardColor: Colors.black))
           .copyWith(
+              appBarTheme: const AppBarTheme(
+                  elevation: 0,
+                  titleTextStyle:
+                      TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
               snackBarTheme: const SnackBarThemeData(
-        backgroundColor: Colors.black54,
-        contentTextStyle: TextStyle(color: Colors.white),
-      )),
+                backgroundColor: Colors.black54,
+                contentTextStyle: TextStyle(color: Colors.white),
+              )),
       themeMode: ThemeMode.dark,
       home: const MainScreen(),
     );

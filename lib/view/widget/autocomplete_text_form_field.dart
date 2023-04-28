@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AutocompleteTextFormField extends StatefulWidget {
   final String? initialValue;
   final String title;
   final List<String> options;
   final ValueSetter<String> onChanged;
+  final TextInputType textInputType;
+  final FormFieldValidator<String>? validator;
 
-  const AutocompleteTextFormField({
-    Key? key,
-    required this.title,
-    required this.options,
-    required this.onChanged,
-    this.initialValue,
-  }) : super(key: key);
+  const AutocompleteTextFormField(
+      {Key? key,
+      required this.title,
+      required this.options,
+      required this.onChanged,
+      this.initialValue,
+      this.textInputType = TextInputType.text,
+      this.validator})
+      : super(key: key);
 
   @override
   State<AutocompleteTextFormField> createState() =>
@@ -47,14 +52,12 @@ class _AutocompleteTextFormFieldState extends State<AutocompleteTextFormField> {
           controller: fieldTextEditingController,
           focusNode: fieldFocusNode,
           onChanged: widget.onChanged,
-          decoration: InputDecoration(
-              label: Text(widget.title)),
-          // validator: (value) {
-          //   if (widget.required && (value == null || value.isEmpty)) {
-          //     return '${widget.title} ist ein Pflichtfeld';
-          //   }
-          //   return null;
-          // },
+          inputFormatters: widget.textInputType == TextInputType.number
+              ? [FilteringTextInputFormatter.digitsOnly]
+              : null,
+          keyboardType: widget.textInputType,
+          decoration: InputDecoration(label: Text(widget.title)),
+          validator: widget.validator,
         );
       },
       onSelected: widget.onChanged,

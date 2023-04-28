@@ -98,12 +98,21 @@ class _FormScreenState extends State<FormScreen> {
                   },
                 ),
                 DateTimePickerTextFormField(
-                    key: UniqueKey(),
-                    title: 'Ankunft',
-                    initialValue: trip.endDate,
-                    onChanged: (date) {
-                      trip.endDate = date;
-                    }),
+                  key: UniqueKey(),
+                  title: 'Ankunft',
+                  initialValue: trip.endDate,
+                  onChanged: (date) {
+                    trip.endDate = date;
+                  },
+                  validator: (value) {
+                    if (trip.endDate != null &&
+                        trip.startDate != null &&
+                        trip.endDate!.isBefore(trip.startDate!)) {
+                      return 'Abfahrt muss vor Ankunft liegen!';
+                    }
+                    return null;
+                  },
+                ),
                 AutocompleteTextFormField(
                     key: UniqueKey(),
                     title: 'Zweck',
@@ -141,17 +150,28 @@ class _FormScreenState extends State<FormScreen> {
                     title: 'KM-Abfahrt',
                     options: const [],
                     initialValue: trip.startMileage?.toString(),
+                    textInputType: TextInputType.number,
                     onChanged: (value) {
                       trip.startMileage = int.tryParse(value);
                     }),
                 AutocompleteTextFormField(
-                    key: UniqueKey(),
-                    title: 'KM-Ankunft',
-                    options: const [],
-                    initialValue: trip.endMileage?.toString(),
-                    onChanged: (value) {
-                      trip.endMileage = int.tryParse(value);
-                    }),
+                  key: UniqueKey(),
+                  title: 'KM-Ankunft',
+                  options: const [],
+                  initialValue: trip.endMileage?.toString(),
+                  textInputType: TextInputType.number,
+                  onChanged: (value) {
+                    trip.endMileage = int.tryParse(value);
+                  },
+                  validator: (value) {
+                    if (trip.endMileage != null &&
+                        trip.startMileage != null &&
+                        trip.endMileage! <= trip.startMileage!) {
+                      return 'KM-Abfahrt muss kleiner als KM-Ankunft sein!';
+                    }
+                    return null;
+                  },
+                ),
               ],
             ),
           ),

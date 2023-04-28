@@ -6,14 +6,14 @@ class DateTimePickerTextFormField extends StatefulWidget {
   final DateTime? initialValue;
   final String title;
   final ValueSetter<DateTime> onChanged;
-  final bool required;
+  final FormFieldValidator<String>? validator;
 
   const DateTimePickerTextFormField({
     Key? key,
     required this.title,
     required this.onChanged,
-    this.required = false,
     this.initialValue,
+    this.validator,
   }) : super(key: key);
 
   @override
@@ -48,12 +48,7 @@ class _DateTimePickerTextFormFieldState
           _dateController.text = dateTimeFormat.format(date);
         }, currentTime: widget.initialValue, locale: LocaleType.de);
       },
-      validator: (value) {
-        if (widget.required && (value == null || value.isEmpty)) {
-          return '${widget.title} ist ein Pflichtfeld';
-        }
-        return null;
-      },
+      validator: widget.validator,
     );
   }
 }
