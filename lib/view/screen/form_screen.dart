@@ -131,7 +131,7 @@ class _FormScreenState extends State<FormScreen> {
                 AutocompleteTextFormField(
                     key: UniqueKey(),
                     title: 'Zweck',
-                    options: vehicles,
+                    options: reasons,
                     initialValue: trip.reason,
                     onChanged: (value) {
                       trip.reason = value;
