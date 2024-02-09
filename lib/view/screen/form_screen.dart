@@ -64,6 +64,24 @@ class _FormScreenState extends State<FormScreen> {
 
     if (this.trip.endDate == null && widget.finalize) {
       trip.endDate = now;
+      if (trip.endLocation == null && trip.parent != null) {
+        Trip parent = await tripService.getById(trip.parent!);
+        trip.endLocation = parent.startLocation;
+
+        if (trip.endLocation != null &&
+            trip.startLocation != null &&
+            trip.startMileage != null &&
+            trip.endMileage == null) {
+          tripService
+              .getLastTripDistance(
+              trip.startLocation, trip.endLocation)
+              .then((value) => setState(() {
+            trip.endMileage =
+            (trip.startMileage! + value!);
+          }));
+        }
+
+      }
     }
 
     setState(() {
@@ -119,7 +137,6 @@ class _FormScreenState extends State<FormScreen> {
                     return null;
                   },
                 ),
-
                 AutocompleteTextFormField(
                     key: UniqueKey(),
                     title: 'Art',
@@ -149,11 +166,10 @@ class _FormScreenState extends State<FormScreen> {
 
                       tripService
                           .getLastEndMileage(value)
-                          .then((value) =>
-                          setState(() {
-                            trip.startMileage = value;
-                            trip.endMileage = null;
-                          }));
+                          .then((value) => setState(() {
+                                trip.startMileage = value;
+                                trip.endMileage = null;
+                              }));
                     }),
                 AutocompleteTextFormField(
                     key: UniqueKey(),
@@ -170,6 +186,18 @@ class _FormScreenState extends State<FormScreen> {
                     initialValue: trip.endLocation,
                     onChanged: (value) {
                       trip.endLocation = value;
+                      if (trip.endLocation != null &&
+                          trip.startLocation != null &&
+                          trip.startMileage != null &&
+                          trip.endMileage == null) {
+                        tripService
+                            .getLastTripDistance(
+                                trip.startLocation, trip.endLocation)
+                            .then((value) => setState(() {
+                                  trip.endMileage =
+                                      (trip.startMileage! + value!);
+                                }));
+                      }
                     }),
                 AutocompleteTextFormField(
                     key: UniqueKey(),

@@ -12,7 +12,8 @@ class TripService {
     return await _tripRepository.delete(id);
   }
 
-  Future<List<Trip>> getAll({String? where, String orderBy = 'startDate DESC'}) async {
+  Future<List<Trip>> getAll(
+      {String? where, String orderBy = 'startDate DESC'}) async {
     return await _tripRepository.getAll(where: where, orderBy: orderBy);
   }
 
@@ -43,16 +44,31 @@ class TripService {
   }
 
   Future<int?> getLastEndMileage(String? vehicle) async {
-    if(vehicle != null) {
-      List<Trip> result = await _tripRepository.getAll(where: 'vehicle = "$vehicle"');
+    if (vehicle != null) {
+      List<Trip> result =
+          await _tripRepository.getAll(where: 'vehicle = "$vehicle"');
       return result.isNotEmpty ? result.first.endMileage : null;
     }
 
     return null;
   }
 
+  Future<int?> getLastTripDistance(
+      String? startLocation, String? endLocation) async {
+    if (startLocation != null && endLocation != null) {
+      List<Trip> result = await _tripRepository.getAll(
+          where:
+              '(startLocation = "$startLocation" and endLocation = "$endLocation") or (startLocation = "$endLocation" and endLocation = "$startLocation")');
+      return result.isNotEmpty
+          ? result.first.endMileage! - result.first.startMileage!
+          : null;
+    }
+    return null;
+  }
+
   Future<String?> getLastEndLocation() async {
-    List<Trip> result = await _tripRepository.getAll(where: 'endLocation is not null');
+    List<Trip> result =
+        await _tripRepository.getAll(where: 'endLocation is not null');
     return result.isNotEmpty ? result.first.endLocation : null;
   }
 
@@ -67,7 +83,8 @@ class TripService {
 
   Future<List<int>> getYears() async {
     List years = await _tripRepository.getDistinctValues('startDate');
-    return years.map((e) => DateTime.fromMillisecondsSinceEpoch(e).year)
+    return years
+        .map((e) => DateTime.fromMillisecondsSinceEpoch(e).year)
         .toSet()
         .toList();
   }

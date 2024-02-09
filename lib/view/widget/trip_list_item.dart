@@ -102,26 +102,27 @@ class _TripListItem extends State<TripListItem> {
             },
           ),
           title: Text(
-            '${dateTimeFormat.format(widget.entry.startDate!)} - ${widget.entry.endDate != null ? timeFormat.format(widget.entry.endDate!) : 'TBD'}',
+            '${dateTimeFormat.format(widget.entry.startDate!)} - ${widget.entry.endDate != null ? timeFormat.format(widget.entry.endDate!) : '?'}',
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text('(${widget.entry.endDate != null ? widget.entry.endDate!.difference(widget.entry.startDate!).inMinutes : "?"} min)'),
               Text(
-                '${widget.entry.startLocation != null ? widget.entry.startLocation! : 'TBD'} - ${widget.entry.endLocation != null ? widget.entry.endLocation! : 'TBD'}',
+                '${widget.entry.startLocation != null ? widget.entry.startLocation! : '?'} - ${widget.entry.endLocation != null ? widget.entry.endLocation! : '?'}',
               ),
               Text(
-                '${widget.entry.type != null ? widget.entry.type! : 'TBD'} - ${widget.entry.reason != null ? widget.entry.reason! : 'TBD'}',
+                '${widget.entry.type != null ? widget.entry.type! : '?'} - ${widget.entry.reason != null ? widget.entry.reason! : '?'}',
               ),
               const Text(
                 '',
               ),
               Text(
-                widget.entry.vehicle != null ? widget.entry.vehicle! : 'TBD',
+                widget.entry.vehicle != null ? widget.entry.vehicle! : '?',
               ),
               if (widget.entry.startMileage != null)
                 Text(
-                  '${(widget.entry.startMileage != null ? numberFormat.format(widget.entry.startMileage!) : 'TBD')} - ${(widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!) : 'TBD')} (${(widget.entry.startMileage != null && widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage! - widget.entry.startMileage!) : 'TBD')})',
+                  '${(widget.entry.startMileage != null ? numberFormat.format(widget.entry.startMileage!) : '?')} - ${(widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage!) : '?')} (${(widget.entry.startMileage != null && widget.entry.endMileage != null ? numberFormat.format(widget.entry.endMileage! - widget.entry.startMileage!) : '?')})',
                 ),
             ],
           ),
