@@ -66,10 +66,10 @@ class ReportService {
     for (var element in trips) {
       List<CellValue?> row = [
         element.startDate != null
-            ? DateCellValue.fromDateTime(element.startDate!)
+            ? DateTimeCellValue.fromDateTime(element.startDate!)
             : null,
         element.endDate != null
-            ? DateCellValue.fromDateTime(element.endDate!)
+            ? DateTimeCellValue.fromDateTime(element.endDate!)
             : null,
         TextCellValue(element.startLocation!),
         TextCellValue(element.endLocation!),
@@ -81,6 +81,14 @@ class ReportService {
         TextCellValue(element.type!),
       ];
       sheet.appendRow(row);
+      sheet.row(rowIndex).forEach((cell) {
+        if (cell != null && cell.value is DateTime) {
+          cell!.cellStyle = (cell.cellStyle ?? CellStyle()).copyWith(
+            numberFormat:
+            const CustomDateTimeNumFormat(formatCode: 'dd.MM.yyyy hh:mm'),
+          );
+        }
+      });
       rowIndex++;
     }
   }
