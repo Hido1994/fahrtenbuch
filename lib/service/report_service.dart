@@ -21,16 +21,15 @@ class ReportService {
       int yearStartMilliseconds = DateTime(year = year).millisecondsSinceEpoch;
       int yearEndMilliseconds =
           DateTime(year = year + 1).millisecondsSinceEpoch;
-      where = '${where==null ? '' : '$where AND'} startDate > $yearStartMilliseconds AND startDate < $yearEndMilliseconds';
+      where =
+          '${where == null ? '' : '$where AND'} startDate > $yearStartMilliseconds AND startDate < $yearEndMilliseconds';
     }
 
-    if(type != null){
-      where = '${where==null ? '' : '$where AND'} type = "$type"';
+    if (type != null) {
+      where = '${where == null ? '' : '$where AND'} type = "$type"';
     }
 
-    trips = await tripService.getAll(
-        where: where,
-        orderBy: 'startDate ASC');
+    trips = await tripService.getAll(where: where, orderBy: 'startDate ASC');
 
     await _generateProtokollSheet(excel, trips);
     await _generateReiseSheet(excel, trips);
@@ -46,17 +45,17 @@ class ReportService {
       bold: true,
       textWrapping: TextWrapping.WrapText,
     );
-    List<String> header = [
-      'Abfahrt',
-      'Ankunft',
-      'Abfahrtsort',
-      'Ankunftsort',
-      'Zweck',
-      'Fahrzeug',
-      'KM-Abfahrt',
-      'KM-Ankunft',
-      'gefahren (km)',
-      'Art',
+    List<CellValue?> header = [
+      TextCellValue('Abfahrt'),
+      TextCellValue('Ankunft'),
+      TextCellValue('Abfahrtsort'),
+      TextCellValue('Ankunftsort'),
+      TextCellValue('Zweck'),
+      TextCellValue('Fahrzeug'),
+      TextCellValue('KM-Abfahrt'),
+      TextCellValue('KM-Ankunft'),
+      TextCellValue('gefahren (km)'),
+      TextCellValue('Art'),
     ];
     sheet.appendRow(header);
     sheet.row(0).forEach((element) {
@@ -65,21 +64,21 @@ class ReportService {
 
     int rowIndex = 2;
     for (var element in trips) {
-      List<dynamic> row = [
+      List<CellValue?> row = [
         element.startDate != null
-            ? dateTimeFormat.format(element.startDate!)
+            ? DateCellValue.fromDateTime(element.startDate!)
             : null,
         element.endDate != null
-            ? dateTimeFormat.format(element.endDate!)
+            ? DateCellValue.fromDateTime(element.endDate!)
             : null,
-        element.startLocation,
-        element.endLocation,
-        element.reason,
-        element.vehicle,
-        element.startMileage,
-        element.endMileage ?? element.startMileage,
-        Formula.custom("H$rowIndex-G$rowIndex"),
-        element.type,
+        TextCellValue(element.startLocation!),
+        TextCellValue(element.endLocation!),
+        TextCellValue(element.reason!),
+        TextCellValue(element.vehicle!),
+        IntCellValue(element.startMileage!),
+        IntCellValue(element.endMileage ?? element.startMileage!),
+        FormulaCellValue("H$rowIndex-G$rowIndex"),
+        TextCellValue(element.type!),
       ];
       sheet.appendRow(row);
       rowIndex++;
@@ -93,20 +92,20 @@ class ReportService {
       bold: true,
       textWrapping: TextWrapping.WrapText,
     );
-    List<String> header = [
-      'Abfahrt',
-      'Ankunft',
-      'Reiseweg',
-      'Zweck',
-      'Fahrzeuge',
-      'Art'
+    List<CellValue?> header = [
+      TextCellValue('Abfahrt'),
+      TextCellValue('Ankunft'),
+      TextCellValue('Reiseweg'),
+      TextCellValue('Zweck'),
+      TextCellValue('Fahrzeuge'),
+      TextCellValue('Art')
     ];
     sheet.appendRow(header);
     sheet.row(0).forEach((element) {
       element!.cellStyle = cellStyle;
     });
 
-    List<dynamic> row = [];
+    List<CellValue?> row = [];
     for (var element in trips) {
       if (element.parent == null) {
         if (row.isNotEmpty) {
@@ -114,22 +113,22 @@ class ReportService {
         }
         row = [
           element.startDate != null
-              ? dateTimeFormat.format(element.startDate!)
+              ? DateCellValue.fromDateTime(element.startDate!)
               : null,
           element.endDate != null
-              ? dateTimeFormat.format(element.endDate!)
+              ? DateCellValue.fromDateTime(element.endDate!)
               : null,
-          '${element.startLocation} - ${element.endLocation}',
-          element.reason,
-          element.vehicle,
-          element.type
+          TextCellValue('${element.startLocation} - ${element.endLocation}'),
+          TextCellValue(element.reason!),
+          TextCellValue(element.vehicle!),
+          TextCellValue(element.type!)
         ];
       } else {
         row[1] = element.endDate != null
-            ? dateTimeFormat.format(element.endDate!)
+            ? DateCellValue.fromDateTime(element.endDate!)
             : null;
-        row[2] = '${row[2]} - ${element.endLocation}';
-        row[4] = '${row[4]} - ${element.vehicle}';
+        row[2] = TextCellValue('${row[2]} - ${element.endLocation}');
+        row[4] = TextCellValue('${row[4]} - ${element.vehicle}');
       }
     }
     sheet.appendRow(row);
