@@ -85,7 +85,7 @@ class ReportService {
         if (cell != null && cell.value is DateTime) {
           cell!.cellStyle = (cell.cellStyle ?? CellStyle()).copyWith(
             numberFormat:
-            const CustomDateTimeNumFormat(formatCode: 'dd.MM.yyyy hh:mm'),
+            const CustomDateTimeNumFormat(formatCode: 'dd.MM.yyyy HH:mm'),
           );
         }
       });
@@ -106,34 +106,38 @@ class ReportService {
       TextCellValue('Reiseweg'),
       TextCellValue('Zweck'),
       TextCellValue('Fahrzeuge'),
-      TextCellValue('Art')
+      TextCellValue('Art'),
+      TextCellValue('Aufenthalt (h)')
     ];
     sheet.appendRow(header);
     sheet.row(0).forEach((element) {
       element!.cellStyle = cellStyle;
     });
 
+    int rowIndex = 2;
     List<CellValue?> row = [];
     for (var element in trips) {
       if (element.parent == null) {
         if (row.isNotEmpty) {
           sheet.appendRow(row);
+          rowIndex++;
         }
         row = [
           element.startDate != null
-              ? DateCellValue.fromDateTime(element.startDate!)
+              ? DateTimeCellValue.fromDateTime(element.startDate!)
               : null,
           element.endDate != null
-              ? DateCellValue.fromDateTime(element.endDate!)
+              ? DateTimeCellValue.fromDateTime(element.endDate!)
               : null,
           TextCellValue('${element.startLocation} - ${element.endLocation}'),
           TextCellValue(element.reason!),
           TextCellValue(element.vehicle!),
-          TextCellValue(element.type!)
+          TextCellValue(element.type!),
+          FormulaCellValue("ROUNDDOWN((B$rowIndex-A$rowIndex)*24, 0)")
         ];
       } else {
         row[1] = element.endDate != null
-            ? DateCellValue.fromDateTime(element.endDate!)
+            ? DateTimeCellValue.fromDateTime(element.endDate!)
             : null;
         row[2] = TextCellValue('${row[2]} - ${element.endLocation}');
         row[4] = TextCellValue('${row[4]} - ${element.vehicle}');

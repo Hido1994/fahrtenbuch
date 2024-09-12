@@ -33,6 +33,7 @@ class _FormScreenState extends State<FormScreen> {
 
   Future<void> _initTrip() async {
     DateTime now = DateTime.now();
+    now = DateTime(now.year, now.month, now.day, now.hour, now.minute);
     now = now.subtract(Duration(seconds: now.second));
 
     List<String> vehicles = await tripService.getVehicles();
@@ -118,6 +119,7 @@ class _FormScreenState extends State<FormScreen> {
                   title: 'Abfahrt',
                   initialValue: trip.startDate,
                   onChanged: (date) {
+                    date = DateTime(date.year, date.month, date.day, date.hour, date.minute);
                     trip.startDate = date;
                   },
                 ),
@@ -126,6 +128,7 @@ class _FormScreenState extends State<FormScreen> {
                   title: 'Ankunft',
                   initialValue: trip.endDate,
                   onChanged: (date) {
+                    date = DateTime(date.year, date.month, date.day, date.hour, date.minute);
                     trip.endDate = date;
                   },
                   validator: (value) {

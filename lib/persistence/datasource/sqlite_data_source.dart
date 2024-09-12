@@ -23,7 +23,11 @@ class SqliteDataSource extends DataSource {
 
   initDB() async {
     String path = await preferenceService.getDatabasePath();
-    _database = await openDatabase(path, version: 1, onConfigure: _onConfigure, onCreate: _onCreate);
+    _database = await openDatabase(path,
+        version: 2,
+        onConfigure: _onConfigure,
+        onCreate: _onCreate,
+        onUpgrade: _onUpgrade);
   }
 
   _onConfigure(Database db) async {
@@ -45,6 +49,12 @@ class SqliteDataSource extends DataSource {
         "parent INTEGER, "
         "FOREIGN KEY (parent) REFERENCES Trip (id) ON DELETE CASCADE "
         ")");
+  }
+
+  _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute("UPDATE Trip SET startDate = (startDate/1000)*1000, endDate = (endDate/1000)*1000");
+    }
   }
 
   @override
@@ -82,8 +92,10 @@ class SqliteDataSource extends DataSource {
   @override
   Future<List<dynamic>> getDistinctValues(String table, String column) async {
     Database db = await database;
-    List<Map<String, dynamic>> result =
-        await db.query(table, columns: [column], orderBy: 'startDate DESC', where: '$column is not null');
+    List<Map<String, dynamic>> result = await db.query(table,
+        columns: [column],
+        orderBy: 'startDate DESC',
+        where: '$column is not null');
     return result.map((e) => e[column]).toSet().toList();
   }
 
