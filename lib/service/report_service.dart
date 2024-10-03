@@ -22,7 +22,7 @@ class ReportService {
       int yearEndMilliseconds =
           DateTime(year = year + 1).millisecondsSinceEpoch;
       where =
-          '${where == null ? '' : '$where AND'} startDate > $yearStartMilliseconds AND startDate < $yearEndMilliseconds';
+          '${where == null ? '' : '$where AND'} startDate >= $yearStartMilliseconds AND startDate <= $yearEndMilliseconds';
     }
 
     if (type != null) {
@@ -71,10 +71,10 @@ class ReportService {
         element.endDate != null
             ? DateTimeCellValue.fromDateTime(element.endDate!)
             : null,
-        TextCellValue(element.startLocation!),
-        TextCellValue(element.endLocation!),
-        TextCellValue(element.reason!),
-        TextCellValue(element.vehicle!),
+        TextCellValue(element.startLocation ?? ''),
+        TextCellValue(element.endLocation ?? ''),
+        TextCellValue(element.reason ?? ''),
+        TextCellValue(element.vehicle ?? ''),
         IntCellValue(element.startMileage!),
         IntCellValue(element.endMileage ?? element.startMileage!),
         FormulaCellValue("H$rowIndex-G$rowIndex"),
